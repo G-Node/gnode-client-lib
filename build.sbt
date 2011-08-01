@@ -3,7 +3,7 @@ name := "G-Node JVM Library"
 version := "0.1"
 
 // Scala dependency
-scalaVersion := "2.9.0-1"
+scalaVersion := "2.8.1"
 
 // JUnit Testing Framework/Harnesses/Fixtures
 // Possibly ScalaTest?
@@ -23,3 +23,5 @@ libraryDependencies ++= Seq(
 
 // JSON Parsing and Emitting
 libraryDependencies += "net.liftweb" % "lift-json" % "2.0"
+
+seq(sbtassembly.Plugin.assemblySettings: _*)
