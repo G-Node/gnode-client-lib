@@ -1,6 +1,8 @@
-name := "G-Node JVM Library"
+name := "gnode-client-lib"
 
 version := "0.1"
+
+organization := "org.gnode"
 
 // Scala dependency
 scalaVersion := "2.8.1"
