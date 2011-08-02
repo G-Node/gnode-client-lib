@@ -7,6 +7,12 @@ organization := "org.gnode"
 // Scala dependency
 scalaVersion := "2.8.1"
 
+// Twttr Maven Repo (util-*)
+resolvers += "Twitter Maven Repository" at "http://maven.twttr.com"
+
+// util-logging
+libraryDependencies += "com.twitter" % "util-logging" % "1.10.4"
+
 // JUnit Testing Framework/Harnesses/Fixtures
 // Possibly ScalaTest?
 libraryDependencies += "junit" % "junit" % "4.8" % "test"
