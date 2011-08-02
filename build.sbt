@@ -30,6 +30,6 @@ libraryDependencies ++= Seq(
 )
 
 // JSON Parsing and Emitting
-libraryDependencies += "net.liftweb" % "lift-json" % "2.0"
+libraryDependencies += "net.liftweb" % "lift-json_2.8.1" % "2.3"
 
 seq(sbtassembly.Plugin.assemblySettings: _*)
