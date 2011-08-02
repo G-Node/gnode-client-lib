@@ -1,26 +1,28 @@
 package org.gnode.conf
 
-import net.liftweb.json._
-
 import org.gnode.util.Loggable
 import org.gnode.util.{File => f}
 
 // Encapsulates configuration data. Emitted by ConfigurationReader; accepted by Connector.
-class Configuration(val username: String,
+case class Configuration(val username: String,
 		    val password: String,
 		    val host: String,
 		    val port: Int,
 		    val path: String,
-		    val apiVersion: String) extends Loggable
+		    val apiVersion: String)
 
-object ConfigurationReader extends Loggable{
+object ConfigurationReader extends Loggable {
 
   // See: org.gnode.util.Loggable
-  logInit()
+  logInit(getClass.toString)
 
   // Parameterized version
-  def create(username: String, password: String, host: String, port: Int = 80, path: String = "/", apiVersion: String = "v1") =
-    new Configuration(username, password, host, port, path, apiVersion)
+  def create(username: String, 
+	     password: String,
+	     host: String,
+	     port: Int = 80,
+	     path: String = "/",
+	     apiVersion: String = "v1") = new Configuration(username, password, host, port, path, apiVersion)
 
   // Wrapper around fromString for straightforward configuration loading from file
   def fromFile(filename: String): Configuration = {
@@ -47,7 +49,22 @@ object ConfigurationReader extends Loggable{
   // Creates configuration object from JSON string
   def fromString(config: String): Configuration = {
 
-    new Configuration("", "", "", 0, "", "")
+    import net.liftweb.json._
+    implicit val formats = DefaultFormats
+
+    try {
+
+      val json = parse(config)
+      return json.extract[Configuration]
+
+    } catch {
+
+      case e => {
+	logger.error("Parsing error: " + e)
+	null
+      }
+
+    }
 
   }
     

@@ -7,6 +7,8 @@ import com.twitter.logging.config._
 
 trait Loggable {
 
+  // Potentially problematic
+  // TODO: Explore Option[T]!
   var logger: Logger = null
 
   // Called from extended class before first log; provides logger: Logger
