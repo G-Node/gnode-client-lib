@@ -1,7 +1,11 @@
-package org.gnode.http
+package org.gnode
 
-import dispatch._
+import org.gnode.log.Loggable
 
-class Connector {
-  val 
+// PRIMARY CLASS mediating all interaction with suitable G-Node datastore
+class Connector extends Loggable {
+
+  logInit(getClass.toString)
+  logger.info("Create new connector.")
+
 }
