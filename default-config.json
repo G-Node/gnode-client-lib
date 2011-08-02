@@ -1,0 +1,12 @@
+{
+        
+    "username": "bob",
+    "password": "pass",
+    
+    "host": "hal10.g-node.pri",
+    "port": 80,
+    "path": "/",
+
+    "apiVersion": "v1"
+
+}
