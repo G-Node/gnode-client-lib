@@ -13,12 +13,15 @@ trait Loggable {
   def logInit(logNode: String = "", logFile: String = "/home/aleonhardt/log/gnode/dev.log"): Unit = {
 
     val logConfig = new LoggerConfig {
+
       node = logNode
       level = Level.DEBUG
+
       handlers = new FileHandlerConfig {
 	filename = logFile
 	roll = Policy.Never
       }
+
     }
 
     logger = logConfig()
