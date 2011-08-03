@@ -62,15 +62,14 @@ class Connector(configuration: Configuration) extends Loggable {
 
   }
 
-  private def pull[T: Mainfest](req: Request): Option[T] = {
+  private def pull[T: Manifest](req: Request): Option[T] = {
     implicit val formats = DefaultFormats
     try {
-      Some(http(query ># { json =>
+      Some(http(req ># { json =>
 	json.extract[T] }))
     } catch {
       case StatusCode(400, _) => logger.error("Request failed"); None
-      case JsonParser.ParseException(_, _) => logger.error("Parsing trouble"); None
-      case _ => logger.error("Unknown error")
+      case e => logger.error("Unknown error: " + e); None
     }
   }
 
