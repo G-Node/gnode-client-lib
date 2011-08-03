@@ -2,7 +2,7 @@ package org.gnode.lib
 
 import org.gnode.lib.util.Loggable
 import org.gnode.lib.conf.{Configuration, ConfigurationReader}
-import org.gnode.lib.neo.{NEObject, NEOBlock, NEObjectList}
+import org.gnode.lib.neo._
 
 import dispatch._
 import dispatch.liftjson.Js._
