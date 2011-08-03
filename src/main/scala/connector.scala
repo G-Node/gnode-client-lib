@@ -19,7 +19,7 @@ class Connector(configuration: Configuration) extends Loggable {
   logInit(this.toString)
   
   // Default Dispatch HTTP object
-  val http = new Http() 
+  lazy val http = new Http
   
   // Local configuration
   val config: Configuration = configuration
@@ -77,6 +77,7 @@ class Connector(configuration: Configuration) extends Loggable {
 
       case StatusCode(400, _) => logger.error("ID not found"); None
       case _ => logger.error("Unknown error"); None
+      // TODO: Check for parser error
 
     }
 
