@@ -1,20 +1,28 @@
 package org.gnode.lib.neo
 
+import org.gnode.lib.util.NEOReflector
+
 /** Return type for Connector.getList(type: String). */
 case class NEObjectList(selected: List[String],
 			object_total: Int,
 			object_selected: Int,
 			selected_as_of: Int,
-			message: String)
+			message: String) extends NEOReflector
 
 /** NEO unit-bearing object */
 case class NEOQuant(units: String, data: Double)
+     extends NEOReflector
 
 /** NEO unit-bearing object (Array) */
 case class NEOQuantMult(units: String, data: List[Double]) // TODO: Find *solid* combination.
+     extends NEOReflector
+
+case class NEOWaveform(waveform: NEOQuantMult,
+		       time_of_spike: Option[NEOQuant],
+		       channel_index: Int) extends NEOReflector
 
 /** Basis for all primary NEO* case classes. */
-sealed abstract class NEObject(neo_id: String)
+sealed abstract class NEObject(neo_id: String) extends NEOReflector
 
 /** NEO block */
 case class NEOBlock(neo_id: String,
@@ -22,9 +30,10 @@ case class NEOBlock(neo_id: String,
 		    name: String,
 		    author: String,
 		    size: Int,
+		    recordingchannelgroup: List[String],
+		    segment: List[String],
 
 		    index: Int,
-		    segment: List[String],
 		    filedatetime: String) extends NEObject(neo_id)
 
 /** NEO analogsignal */
@@ -97,10 +106,6 @@ case class NEOUnit(neo_id: String,
 		   date_created: String,
 		   size: Int) extends NEObject(neo_id)
 
-case class NEOWaveform(waveform: NEOQuantMult,
-		       time_of_spike: Option[NEOQuant],
-		       channel_index: Int)
-
 case class NEOSpikeTrain(neo_id: String,
 
 			 t_start: NEOQuant,
@@ -109,6 +114,7 @@ case class NEOSpikeTrain(neo_id: String,
 			 waveforms: List[NEOWaveform],
 
 			 date_created: String,
+			 author: String,
 			 segment: String,
 			 unit: Option[String],
 			 size: Int) extends NEObject(neo_id)
