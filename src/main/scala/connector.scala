@@ -31,7 +31,7 @@ class Connector(configuration: Configuration) extends Loggable {
   /** Auxiliary constructor. Returns `Connection` with default configuration. */
   def this() = this(ConfigurationReader.default)
   /** Auxiliary constructor. Returns `Connection` with configuration from specified JSON resource. */
-  def this(filename: String) = this(ConfigurationReader.fromFile(filename))
+  def this(filename: String) = this(ConfigurationReader.fromFile(filename).getOrElse(null))
 
   /** In absence of Java 7's AutoClose: a kill-switch. */
   def kill = {
