@@ -5,6 +5,8 @@ import org.gnode.lib.conf.{Configuration, ConfigurationReader}
 import org.gnode.lib.neo.{NEObject, NEOBlock, NEObjectList}
 
 import dispatch._
+import dispatch.liftjson.Js._
+
 import net.liftweb.json._
 import net.liftweb.json.JsonAST._
 
@@ -60,8 +62,9 @@ class Connector(configuration: Configuration) extends Loggable {
     implicit val formats = DefaultFormats
     
     val query = url(urlBase(this.config)) / "neo" / id
-    val jsonResult = (http(query as_str)).toString
-    (parse(jsonResult)).extract[T]
+
+    http(query ># { json =>
+      json.extract[T] })
 
   }
 
@@ -71,8 +74,9 @@ class Connector(configuration: Configuration) extends Loggable {
     implicit val formats = DefaultFormats
 
     val query = url(urlBase(this.config)) / "neo" / "select" / objectType
-    val jsonResult = (http(query as_str)).toString
-    (parse(jsonResult)).extract[NEObjectList]
+
+    http(query ># { json =>
+      json.extract[NEObjectList] })
 
   }
   
