@@ -27,10 +27,14 @@ class Connector(configuration: Configuration) extends Loggable {
   /** Auxiliary constructor. Returns `Connection` with configuration from specified JSON resource. */
   def this(filename: String) = this(ConfigurationReader.fromFile(filename))
 
+  /** Generates URL basis from Configuration. */
+  private def urlBase(c: Configuration): String =
+    "http://" + c.host + ":" + c.port + c.path
+
   /** Authenticates the ongoing G-Node session based on credentials specified in configuration. */
   def authenticate: Unit = {
 
-    val query = url("http://" + config.host + ":" + config.port) / config.path / "account" / "login/"
+    val query = url(urlBase(this.config)) / "account" / "login/"
 
     // Subsequent authentication test is exceedingly brittle; at this point,
     // however, no solid confirmation technique available due to
@@ -50,10 +54,6 @@ class Connector(configuration: Configuration) extends Loggable {
 
   }
   
-  /** Generates URL basis from Configuration. */
-  private def urlBase(c: Configuration): String =
-    "http://" + c.host + ":" + c.port + c.path
-
   /** Generic. Pulls object with corresponding ID. */
   def getByID[T: Manifest](id: String): T = {
 
