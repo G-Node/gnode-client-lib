@@ -9,6 +9,7 @@ import dispatch.liftjson.Js._
 
 import net.liftweb.json._
 import net.liftweb.json.JsonAST._
+import net.liftweb.json.JsonParser
 
 import scala.reflect.Manifest
 
@@ -53,7 +54,7 @@ class Connector(configuration: Configuration) extends Loggable {
       text.contains("What Next?") })
 
     // TODO: Throw appropriate exception
-    if (!success) {
+    if (!success) {  // Why, oh why no ternary operator, Scala.
       logger.error("Log-in failure. Check credentials")
     } else {
       logger.info("Successful log-in")
@@ -81,6 +82,18 @@ class Connector(configuration: Configuration) extends Loggable {
 
     }
 
+  }
+
+  private def pull[T: Mainfest](req: Request): Option[T] = {
+    implicit val formats = DefaultFormats
+    try {
+      Some(http(query ># { json =>
+	json.extract[T] }))
+    } catch {
+      case StatusCode(400, _) => logger.error("Request failed"); None
+      case JsonParser.ParseException(_, _) => logger.error("Parsing trouble"); None
+      case _ => logger.error("Unknown error")
+    }
   }
 
   /** Pulls list of available objects with `objectType: String`. */
