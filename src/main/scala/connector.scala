@@ -62,26 +62,44 @@ class Connector(configuration: Configuration) extends Loggable {
   }
   
   /** Generic. Pulls object with corresponding ID. */
-  def getByID[T: Manifest](id: String): T = {
+  def getByID[T: Manifest](id: String): Option[T] = {
 
     implicit val formats = DefaultFormats
     
     val query = url(urlBase(this.config)) / "neo" / id
 
-    http(query ># { json =>
-      json.extract[T] })
+    try {
+
+      Some(http(query ># { json =>
+	json.extract[T] }))
+
+    } catch {
+
+      case StatusCode(400, _) => logger.error("ID not found"); None
+      case _ => logger.error("Unknown error"); None
+
+    }
 
   }
 
   /** Pulls list of available objects with `objectType: String`. */
-  def getList(objectType: String): NEObjectList = {
+  def getList(objectType: String): Option[NEObjectList] = {
 
     implicit val formats = DefaultFormats
 
     val query = url(urlBase(this.config)) / "neo" / "select" / objectType
 
-    http(query ># { json =>
-      json.extract[NEObjectList] })
+    try {
+
+      Some(http(query ># { json =>
+	json.extract[NEObjectList] }))
+
+    } catch {
+
+      case StatusCode(400, _) => logger.error("Object type not found"); None
+      case _ => logger.error("Unknown error"); None
+
+    }
 
   }
   
