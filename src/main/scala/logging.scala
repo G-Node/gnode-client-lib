@@ -3,7 +3,12 @@ package org.gnode.lib.util
 import com.twitter.logging.{Logger, Level, Policy}
 import com.twitter.logging.config._
 
-// CONVENIENCE TRAIT FOR LOGGING VIA TWITTER/UTIL-LOGGER
+/** Convenience trait for logging via Twttr's '''util-logger''' utility
+ *
+ * Mix-in of this trait provides `logger` member which implements
+ * all functionality provided by util-logger; currently, configuration
+ * only in `Loggable` source.
+ */
 
 trait Loggable {
 
@@ -11,8 +16,9 @@ trait Loggable {
   // TODO: Explore Option[T]!
   var logger: Logger = null
 
-  // Called from extended class before first log; provides logger: Logger
-  def logInit(logNode: String = "", logFile: String = "/home/aleonhardt/log/gnode/dev.log"): Unit = {
+  /** To be called in constructor of subclass (usually with getClass.toString) */
+  def logInit(logNode: String = "",
+	      logFile: String = "/home/aleonhardt/log/gnode/dev.log"): Unit = {
 
     val logConfig = new LoggerConfig {
 
