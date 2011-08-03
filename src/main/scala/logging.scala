@@ -16,7 +16,9 @@ trait Loggable {
   // TODO: Explore Option[T]!
   var logger: Logger = null
 
-  /** To be called in constructor of subclass (usually with getClass.toString) */
+  /** To be called in constructor of subclass (usually with getClass.toString). Logging via
+   * logger.error/debug/info/warn/fatal/(...). */
+
   def logInit(logNode: String = "",
 	      logFile: String = "/home/aleonhardt/log/gnode/dev.log"): Unit = {
 
