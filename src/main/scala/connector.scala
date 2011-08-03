@@ -49,15 +49,30 @@ class Connector(configuration: Configuration) extends Loggable {
     }
 
   }
+  
+  /** Generates URL basis from Configuration. */
+  private def urlBase(c: Configuration): String =
+    "http://" + c.host + ":" + c.port + c.path
 
   /** Generic. Pulls object with corresponding ID. */
   def getByID[T: Manifest](id: String): T = {
 
     implicit val formats = DefaultFormats
     
-    val query = url("http://" + config.host + ":" + config.port) / config.path / "neo" / id
+    val query = url(urlBase(this.config)) / "neo" / id
     val jsonResult = (http(query as_str)).toString
     (parse(jsonResult)).extract[T]
+
+  }
+
+  /** Pulls list of available objects with `objectType: String`. */
+  def getList(objectType: String): NEObjectList = {
+
+    implicit val formats = DefaultFormats
+
+    val query = url(urlBase(this.config)) / "neo" / "select" / objectType
+    val jsonResult = (http(query as_str)).toString
+    (parse(jsonResult)).extract[NEObjectList]
 
   }
   
