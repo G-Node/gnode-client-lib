@@ -16,6 +16,9 @@ object ConfigurationReader extends Loggable {
   // See: org.gnode.lib.util.Loggable
   logInit(getClass.toString)
 
+  // Make default
+  val default: Configuration = create("bob", "pass", "hal10.g-node.pri")
+
   // Parameterized version
   def create(username: String, 
 	     password: String,
