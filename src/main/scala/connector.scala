@@ -29,6 +29,11 @@ class Connector(configuration: Configuration) extends Loggable {
   /** Auxiliary constructor. Returns `Connection` with configuration from specified JSON resource. */
   def this(filename: String) = this(ConfigurationReader.fromFile(filename))
 
+  /** In absence of Java 7's AutoClose: a kill-switch. */
+  def kill = {
+    this.http.shutdown()
+  }
+
   /** Generates URL basis from Configuration. */
   private def urlBase(c: Configuration): String =
     "http://" + c.host + ":" + c.port + c.path
