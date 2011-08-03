@@ -31,7 +31,22 @@ class Connector(configuration: Configuration) extends Loggable {
   def authenticate: Unit = {
 
     val query = url("http://" + config.host + ":" + config.port) / config.path / "account" / "login/"
-    http(query << Map("username" -> config.username, "password" -> config.password) >|)
+
+    // Subsequent authentication test is exceedingly brittle; at this point,
+    // however, no solid confirmation technique available due to
+    //   a) an invalid XHTML response (non-parseable by scala.xml._) as well as
+    //   b) lack of appropriate 401 response.
+    // Hack will be fixed once server response unequivocal.
+
+    val success: Boolean = http(query << Map("username" -> config.username, "password" -> config.password) >- { text =>
+      text.contains("What Next?") })
+
+    // TODO: Throw appropriate exception
+    if (!success) {
+      logger.error("Log-in failure. Check credentials")
+    } else {
+      logger.info("Successful log-in")
+    }
 
   }
 
