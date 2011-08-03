@@ -6,4 +6,5 @@ project/plugins/project/*
 *~
 .history
 *.class
-#*
+\#*
+.\#*

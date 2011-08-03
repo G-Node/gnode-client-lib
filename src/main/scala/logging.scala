@@ -1,4 +1,4 @@
-package org.gnode.util
+package org.gnode.lib.util
 
 import com.twitter.logging.{Logger, Level, Policy}
 import com.twitter.logging.config._

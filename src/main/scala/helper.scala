@@ -1,4 +1,4 @@
-package org.gnode.util
+package org.gnode.lib.util
 
 object File {
 

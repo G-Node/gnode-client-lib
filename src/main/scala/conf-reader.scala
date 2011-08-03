@@ -1,7 +1,7 @@
-package org.gnode.conf
+package org.gnode.lib.conf
 
-import org.gnode.util.Loggable
-import org.gnode.util.{File => f}
+import org.gnode.lib.util.Loggable
+import org.gnode.lib.util.{File => f}
 
 // Encapsulates configuration data. Emitted by ConfigurationReader; accepted by Connector.
 case class Configuration(val username: String,
@@ -13,7 +13,7 @@ case class Configuration(val username: String,
 
 object ConfigurationReader extends Loggable {
 
-  // See: org.gnode.util.Loggable
+  // See: org.gnode.lib.util.Loggable
   logInit(getClass.toString)
 
   // Parameterized version
@@ -37,8 +37,14 @@ object ConfigurationReader extends Loggable {
 
     } catch {
 
-      case e: java.io.FileNotFoundException => logger.error("Configuration file (" + filename + ") not found."); config = null
-      case _ => logger.error("Error while importing from file (" + filename + ")"); config = null
+      case e: java.io.FileNotFoundException => {
+	logger.error("Configuration file (" + filename + ") not found")
+	config = null
+      }
+      case _ => {
+	logger.error("Error while importing from file (" + filename + ")")
+	config = null
+      }
 
     }
 

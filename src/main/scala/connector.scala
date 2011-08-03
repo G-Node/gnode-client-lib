@@ -1,6 +1,6 @@
-package org.gnode
+package org.gnode.lib
 
-import org.gnode.util.Loggable
+import org.gnode.lib.util.Loggable
 
 // PRIMARY CLASS mediating all interaction with suitable G-Node datastore
 class Connector extends Loggable {
