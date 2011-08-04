@@ -1,5 +1,11 @@
 package org.gnode.lib.util
 
+import scala.collection.mutable.Map
+import scala.collection.JavaConversions._
+import java.util.{Map => JMap}
+
+import org.gnode.lib.neo._
+
 /** This trait provides basic reflection functionality for all NEObjects, as well as a
  * convenient prettyPrint method for CL usage of org.gnode.lib functions. */
 
@@ -16,6 +22,24 @@ trait NEOReflector extends Product {
     }
     productIterator.toList map { value => fieldValueToName(value) -> value }
   }
+
+  def unpack: JMap[String, Any] = {
+
+    var myMap: Map[String, Any] = Map()
+
+    for (field <- getClass.getDeclaredFields) {
+      field.setAccessible(true)
+      myMap += field.getName -> (field.get(this) match {
+	case l: List[String] => l.toArray
+	case n: NEObject => n.unpack
+	case e => e
+      })
+    }
+
+    myMap
+
+  }
+      
 
   /** Human-readable printing of parsed NEObject. */
 

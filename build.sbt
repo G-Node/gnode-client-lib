@@ -26,3 +26,5 @@ libraryDependencies ++= Seq(
 libraryDependencies += "net.liftweb" % "lift-json_2.9.0-1" % "2.4-M3"
 
 seq(sbtassembly.Plugin.assemblySettings: _*)
+
+scalacOptions ++= Seq("-unchecked", "-deprecation")
