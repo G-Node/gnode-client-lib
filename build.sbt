@@ -5,7 +5,7 @@ version := "0.1"
 organization := "org.gnode"
 
 // Scala dependency
-scalaVersion := "2.9.0"
+scalaVersion := "2.9.0-1"
 
 // Twttr Maven Repo (util-*)
 resolvers += "Twitter Maven Repository" at "http://maven.twttr.com"
@@ -23,6 +23,6 @@ libraryDependencies ++= Seq(
 )
 
 // JSON Parsing and Emitting
-libraryDependencies += "net.liftweb" % "lift-json_2.8.1" % "2.3"
+libraryDependencies += "net.liftweb" % "lift-json_2.9.0-1" % "2.4-M3"
 
 seq(sbtassembly.Plugin.assemblySettings: _*)
