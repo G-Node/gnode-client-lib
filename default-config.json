@@ -1,5 +1,10 @@
 {
-        
+
+    "_comment": "G-NODE CONFIGURATION FILE",
+    "_comment": "Required fields:"
+    "required": ["username", "password", "host", "port", "path",
+		 "apiVersion", "caching", "db"],
+    
     "username": "bob",
     "password": "pass",
     
@@ -9,4 +14,7 @@
 
     "apiVersion": "v1"
 
+    "caching" : "ONLY_MEM"
+    "db": null
+    
 }
