@@ -23,24 +23,6 @@ trait NEOReflector extends Product {
     productIterator.toList map { value => fieldValueToName(value) -> value }
   }
 
-  def unpack: JMap[String, Any] = {
-
-    var myMap: Map[String, Any] = Map()
-
-    for (field <- getClass.getDeclaredFields) {
-      field.setAccessible(true)
-      myMap += field.getName -> (field.get(this) match {
-	case l: List[String] => l.toArray
-	case n: NEObject => n.unpack
-	case e => e
-      })
-    }
-
-    myMap
-
-  }
-      
-
   /** Human-readable printing of parsed NEObject. */
 
   def prettyPrint = {
@@ -74,3 +56,5 @@ object File {
   }
 
 }
+
+
