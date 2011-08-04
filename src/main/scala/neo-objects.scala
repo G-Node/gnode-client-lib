@@ -127,7 +127,7 @@ case class NEOSpike(neo_id: String,
 		    left_sweep: NEOQuant,
 		    
 		    date_created: String,
-		    segment: String,
+		    segment: Option[String],
 		    unit: Option[String],
 		    size: Int) extends NEObject(neo_id)
 

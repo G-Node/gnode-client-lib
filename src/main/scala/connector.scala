@@ -26,7 +26,7 @@ class Connector(configuration: Configuration) extends Loggable {
   lazy val http = new Http
   
   /** Local configuration */
-  private val config: Configuration = configuration
+  val config: Configuration = configuration
 
   /** Auxiliary constructor. Returns `Connection` with default configuration. */
   def this() = this(ConfigurationReader.default)
@@ -93,12 +93,14 @@ class Connector(configuration: Configuration) extends Loggable {
   }
 
   /** Pulls list of available objects with `objectType: String`. */
-  def getList(objectType: String): Option[NEObjectList] = {
+  def getListSafe(objectType: String): Option[NEObjectList] = {
 
     val query = url(urlBase(this.config)) / "neo" / "select" / objectType
     pull[NEObjectList](query)
 
   }
+
+  def getList(objectType: String): NEObjectList = getListSafe(objectType).getOrElse(null)
 
   def getBlock(id: String): NEOBlock = getByID[NEOBlock](id).getOrElse(null)
   def getSignal(id: String): NEOAnalogSignal = getByID[NEOAnalogSignal](id).getOrElse(null)

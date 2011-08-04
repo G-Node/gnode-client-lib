@@ -23,7 +23,7 @@ trait NEOReflector extends Product {
 
     val fields = this.getFields
     fields.foreach { t =>
-      println((" " * (20 - t._1.size)) + t._1 + " => " + t._2.toString) }
+      println((" " * (25 - t._1.size)) + t._1 + " => " + t._2.toString) }
 
   }
 
