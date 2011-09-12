@@ -22,7 +22,7 @@ libraryDependencies ++= Seq(
 // Development-time dependencies
 libraryDependencies ++= Seq(
   "org.scala-tools.testing" %% "scalacheck" % "1.9" % "test",
-  "org.scala-tools.testing" % "scalatest" % "0.9.5" % "test"
+  "org.scalatest" %% "scalatest" % "1.6.1" % "test"
 )
 
 seq(sbtassembly.Plugin.assemblySettings: _*)
