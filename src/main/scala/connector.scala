@@ -111,5 +111,17 @@ class Connector(configuration: Configuration) extends Loggable {
   def getSpikeTrain(id: String): NEOSpikeTrain = getByID[NEOSpikeTrain](id).getOrElse(null)
   def getSpike(id: String): NEOSpike = getByID[NEOSpike](id).getOrElse(null)
   def getRecordingChannel(id: String): NEORecordingChannel = getByID[NEORecordingChannel](id).getOrElse(null)
+
+  // MATLAB (ad-hoc!) functions
+
+  def mGetData(id: String) = {
+    val o = getSignal(id)
+    o.signal.data.toArray
+  }
+
+  def mGetList(objectType: String) = {
+    val l = getList(objectType)
+    l.selected.toArray
+  }
   
 }
