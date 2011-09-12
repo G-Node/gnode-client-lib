@@ -9,8 +9,13 @@ case class Configuration(username: String,
 			 host: String,
 			 port: Int,
 			 path: String,
-			 apiVersion: String)
+			 apiVersion: String) {
 
+  def isIncomplete(): Boolean =
+    host.isEmpty || port == 0
+
+}
+    
 object ConfigurationReader extends Loggable {
 
   // See: org.gnode.lib.util.Loggable
@@ -24,7 +29,7 @@ object ConfigurationReader extends Loggable {
 	     password: String,
 	     host: String,
 	     port: Int = 80,
-	     path: String = "/",
+	     path: String = "",
 	     apiVersion: String = "v1") = Configuration(username, password, host, port, path, apiVersion)
 
   /** Wrapper around fromString for straightforward configuration loading from file */
