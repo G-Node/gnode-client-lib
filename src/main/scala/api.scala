@@ -18,7 +18,7 @@ class DefaultCallGenerator(val configuration: Configuration) extends CallGenerat
   lazy val basis = :/(configuration.host) / configuration.path
 
   def authenticateUser(): Option[Request] = authenticateUser(configuration.username,
-						     configuration.password)
+							     configuration.password)
 
   def authenticateUser(username: String, password: String): Option[Request] =
     if (configuration.isIncomplete) None else {

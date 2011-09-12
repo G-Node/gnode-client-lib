@@ -15,9 +15,9 @@ class CallGeneratorSpec extends WordSpec with ShouldMatchers {
     s == scheme && h == host && p == path
   }
   
-  val config = ConfigurationReader.default
-  val default_gen = new DefaultCallGenerator(config)
-  val empty_gen = new DefaultCallGenerator(ConfigurationReader.create("", "", "", 0, "", ""))
+  private val config = ConfigurationReader.default
+  private val default_gen = new DefaultCallGenerator(config)
+  private val empty_gen = new DefaultCallGenerator(ConfigurationReader.create("", "", "", 0, "", ""))
     
 
   "authenticateUser() on CallGenerator" when {    
