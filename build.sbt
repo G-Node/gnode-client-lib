@@ -1,29 +1,29 @@
 name := "gnode-client-lib"
 
-version := "0.1"
+version := "0.2"
 
 organization := "org.gnode"
 
 // Scala dependency
-scalaVersion := "2.9.0-1"
+scalaVersion := "2.9.1"
 
 // Twttr Maven Repo (util-*)
 resolvers += "Twitter Maven Repository" at "http://maven.twttr.com"
 
-// util-logging
-libraryDependencies += "com.twitter" % "util-logging" % "1.10.4"
-
-// HTTP Library
+// Release-time dependencies and libraries
 libraryDependencies ++= Seq(
-  "net.databinder" %% "dispatch-http" % "0.8.4"
+  "net.databinder" %% "dispatch-http" % "0.8.5",
+  "net.databinder" %% "dispatch-lift-json" % "0.8.5",
+  "net.databinder" %% "dispatch-json" % "0.8.5",
+  "net.liftweb" %% "lift-json" % "2.4-M4",
+  "com.twitter" % "util-logging" % "1.11.4"
 )
 
+// Development-time dependencies
 libraryDependencies ++= Seq(
-  "net.databinder" %% "dispatch-lift-json" % "0.8.4"
+  "org.scala-tools.testing" %% "scalacheck" % "1.9" % "test",
+  "org.scala-tools.testing" % "scalatest" % "0.9.5" % "test"
 )
-
-// JSON Parsing and Emitting
-libraryDependencies += "net.liftweb" % "lift-json_2.9.0-1" % "2.4-M3"
 
 seq(sbtassembly.Plugin.assemblySettings: _*)
 
