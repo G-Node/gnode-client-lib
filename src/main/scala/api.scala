@@ -8,6 +8,9 @@ trait CallGenerator {
   def authenticateUser(): Option[Request]
   def authenticateUser(username: String, password: String): Option[Request]
 
+  def createObject(): Option[Request]
+  def updateObject(id: String): Option[Request]
+
 }
 
 class DefaultCallGenerator(val configuration: Configuration) extends CallGenerator {
@@ -23,4 +26,10 @@ class DefaultCallGenerator(val configuration: Configuration) extends CallGenerat
       Some(basis / "account" / "authenticate" / "" << post_body)
     }
 
+  def createObject(): Option[Request] =
+    if (configuration.isIncomplete) None else Some((basis / "neo" / "").PUT)
+
+  def updateObject(id: String = ""): Option[Request] =
+    if (configuration.isIncomplete) None else Some((basis / "neo" / id / "").POST)
+    
 }
