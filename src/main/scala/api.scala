@@ -5,23 +5,22 @@ import org.gnode.lib.conf._
 
 trait CallGenerator {
 
-  def authenticateUser(): Request
-  def authenticateUser(username: String, password: String): Request
+  def authenticateUser(): Option[Request]
+  def authenticateUser(username: String, password: String): Option[Request]
 
 }
 
 class DefaultCallGenerator(val configuration: Configuration) extends CallGenerator {
 
-  def authenticateUser(): Request = authenticateUser(configuration.username,
+  lazy val basis = :/(configuration.host) / configuration.path
+
+  def authenticateUser(): Option[Request] = authenticateUser(configuration.username,
 						     configuration.password)
 
-  def authenticateUser(username: String, password: String): Request = {
-
-    val basis = :/(configuration.host)
-    val post_body = "username=" + username + "&password=" + password
-    
-    basis / "login" / "authenticate" / "" << post_body
-
-  }
+  def authenticateUser(username: String, password: String): Option[Request] =
+    if (configuration.isIncomplete) None else {
+      val post_body = "username=" + username + "&password=" + password
+      Some(basis / "account" / "authenticate" / "" << post_body)
+    }
 
 }
