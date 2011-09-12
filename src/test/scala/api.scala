@@ -93,7 +93,7 @@ class CallGeneratorSpec extends WordSpec with ShouldMatchers {
       val request = default_gen.updateObject("test").get
       
       "return a POST request" in { (request method) should equal ("POST") }
-      "produce URI corresponding to to http://host/neo/id/" in { checkURI(request, "http", config.host, "/neo/test/") should be (true) }
+      "produce URI corresponding to http://host/neo/id/" in { checkURI(request, "http", config.host, "/neo/test/") should be (true) }
 
     }
 
@@ -104,6 +104,73 @@ class CallGeneratorSpec extends WordSpec with ShouldMatchers {
 
     }
 
+    "called with empty string as id" should {
+
+      "throw an IllegalArgumentException" in {
+	evaluating { val request = default_gen.updateObject("").get } should produce [IllegalArgumentException]
+      }
+
+    }
+
   }
+
+  "getObject() on CallGenerator" when {
+
+    val neo_id = "test"
+
+    "called" should {
+
+      val request = default_gen.getObject(neo_id).get
+
+      "return a GET request" in { (request method) should equal ("GET") }
+      "produce URI corresponding to http://host/neo/id/" in {
+	checkURI(request, "http", config.host, "/neo/" + neo_id + "/") should be (true)
+      }
+
+    }
+
+    "called with empty configuration" should {
+      val request = empty_gen.getObject(neo_id)
+      "return None" in { request should be (None) }
+    }
+
+    "called with empty string as id" should {
+      "throw an IllegalArgumentException" in {
+	evaluating { val request = default_gen.getObject("").get } should produce [IllegalArgumentException]
+      }
+   
+    }
+  
+  }
+
+  "getData() on CallGenerator" when {
+
+    val neo_id = "test"
+
+    "called" should {
+
+      val request = default_gen.getData(neo_id).get
+
+      "return a GET request" in { (request method) should equal ("GET") }
+      "produce URI corresponding to http://host/neo/data/id/" in {
+	checkURI(request, "http", config.host, "/neo/data/" + neo_id + "/") should be (true)
+      }
+
+    }
+
+    "called with empty configuration" should {
+      val request = empty_gen.getData(neo_id)
+      "return None" in { request should be (None) }
+    }
+
+    "called with empty string as id" should {
+      "throw an IllegalArgumentException" in {
+	evaluating { val request = default_gen.getData("").get } should produce [IllegalArgumentException]
+      }
+      
+    }
+    
+  }
+
 
 }

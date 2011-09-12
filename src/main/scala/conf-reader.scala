@@ -29,7 +29,7 @@ object ConfigurationReader extends Loggable {
 	     password: String,
 	     host: String,
 	     port: Int = 80,
-	     path: String = "",
+	     path: String = "neo",
 	     apiVersion: String = "v1") = Configuration(username, password, host, port, path, apiVersion)
 
   /** Wrapper around fromString for straightforward configuration loading from file */
