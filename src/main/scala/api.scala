@@ -12,53 +12,77 @@ trait CallGenerator {
   def updateObject(id: String): Option[Request]
 
   def getObject(id: String): Option[Request]
+  def getData(id: String, options: Map[String, String] = Map()): Option[Request]
+
+  def getParents(id: String): Option[Request]
+  def getChildren(id: String): Option[Request]
+
+  def getList(id: String, options: Map[String, String] = Map()): Option[Request]
+  def assign(id: String, options: Map[String, String] = Map()): Option[Request]
 
 }
 
-class DefaultCallGenerator(val configuration: Configuration) extends CallGenerator {
+trait APIHelper {
 
-  private lazy val short_basis = :/(configuration.host)
-  private lazy val basis = :/(configuration.host) / configuration.path
-
-  private def pack(condition: Boolean = false)(request: Request): Option[Request] =
-    if (this.configuration.isIncomplete) None
+  protected def pack(condition: Boolean = false, configuration: Configuration)(request: Request): Option[Request] =
+    if (configuration.isIncomplete) None
     else if (condition) throw new IllegalArgumentException
     else Some(request)
+
+}
+
+class DefaultAPI(config: Configuration) extends CallGenerator with APIHelper {
+
+  private val configuration = config
+  
+  private val short_basis = :/(configuration.host)
+  private val basis = :/(configuration.host) / configuration.path
 
   def authenticateUser(): Option[Request] = authenticateUser(configuration.username,
 							     configuration.password)
 
   def authenticateUser(username: String, password: String): Option[Request] =
-    pack(false) {
+    pack(false, configuration) {
       val post_body = "username=" + username + "&password=" + password
       short_basis / "account" / "authenticate" / "" << post_body
     }
 
   def createObject(): Option[Request] =
-    pack(false) { (basis / "").PUT }
+    pack(false, configuration) { (basis / "").PUT }
 
   def updateObject(id: String): Option[Request] =
-    pack(id.isEmpty) {
+    pack(id.isEmpty, configuration) {
       (basis / id / "").POST
     }
 
   def getObject(id: String): Option[Request] =
-    pack(id.isEmpty) {
+    pack(id.isEmpty, configuration) {
       basis / id / ""
     }
 
   def getData(id: String, options: Map[String, String] = Map()): Option[Request] =
-    pack(id.isEmpty) {
+    pack(id.isEmpty, configuration) {
       basis / "data" / id / "" <<? options
     }
 
-  // def getData(id: String,
-  // 	      startTime: Long,
-  // 	      endTime: Long,
-  // 	      duration: Long,
-  // 	      startIndex: Long,
-  // 	      endIndex: Long,
-  // 	      samplesCount: Long,
-  // 	      downsample: Long) = {}
+  def getParents(id: String): Option[Request] =
+    pack(id.isEmpty, configuration) {
+      basis / "parents" / id / ""
+    }
 
+  def getChildren(id: String): Option[Request] =
+    pack(id.isEmpty, configuration) {
+      basis / "children" / id / ""
+    }
+
+  def getList(objectType: String, options: Map[String, String]): Option[Request] =
+    pack(objectType.isEmpty, configuration) {
+      basis / "select" / objectType / "" <<? options
+    }
+
+  def assign(id: String, options: Map[String, String]): Option[Request] =
+    pack(id.isEmpty, configuration) {
+      basis / "assign" / id / "" <<? options
+    }
+  
 }

@@ -16,8 +16,8 @@ class CallGeneratorSpec extends WordSpec with ShouldMatchers {
   }
   
   private val config = ConfigurationReader.default
-  private val default_gen = new DefaultCallGenerator(config)
-  private val empty_gen = new DefaultCallGenerator(ConfigurationReader.create("", "", "", 0, "", ""))
+  private val default_gen: CallGenerator = new DefaultAPI(config)
+  private val empty_gen: CallGenerator = new DefaultAPI(ConfigurationReader.create("", "", "", 0, "", ""))
 
   "authenticateUser() on CallGenerator" when {    
     "called with specified username and password" should {
@@ -164,8 +164,7 @@ class CallGeneratorSpec extends WordSpec with ShouldMatchers {
       val request = default_gen.getData(neo_id, Map("tes t" -> "%ds 33")).get
 
       "return a GET request" in { (request method) should equal ("GET") }
-      "produce URI corresponding to http://host/neo/data/id/" in { checkURI(request, "http", config.host, "/neo/data/" + neo_id + "/") should be (true) }
-      "add escaped query variables" in { checkURI(request, "http", config.host, "/neo/data/" + neo_id + "/", "test+t=%ds+33") should be (true) }
+      "add escaped query variables" in { checkURI(request, "http", config.host, "/neo/data/" + neo_id + "/", "tes+t=%ds+33") should be (true) }
 
     }
 
