@@ -9,16 +9,15 @@ import java.net.URI
 
 class CallGeneratorSpec extends WordSpec with ShouldMatchers {
 
-  private def checkURI(request: Request, scheme: String, host: String, path: String): Boolean = {
+  private def checkURI(request: Request, scheme: String, host: String, path: String, query: String = null): Boolean = {
     val uri = request to_uri
-    val (s, h, p) = (uri.getScheme, uri.getHost, uri.getPath)
-    s == scheme && h == host && p == path
+    val (s, h, p, q) = (uri.getScheme, uri.getHost, uri.getPath, uri.getQuery)
+    s == scheme && h == host && p == path && q == query
   }
   
   private val config = ConfigurationReader.default
   private val default_gen = new DefaultCallGenerator(config)
   private val empty_gen = new DefaultCallGenerator(ConfigurationReader.create("", "", "", 0, "", ""))
-    
 
   "authenticateUser() on CallGenerator" when {    
     "called with specified username and password" should {
@@ -26,12 +25,12 @@ class CallGeneratorSpec extends WordSpec with ShouldMatchers {
       val request = default_gen.authenticateUser("test", "pass").get
       
       "return a POST request" in { request.method should equal ("POST") }
-      "have 'username=X&password=Y' as POST body" in {
 
+      "have 'username=X&password=Y' as POST body" in {
 	val post_body = org.apache.http.util.EntityUtils.toString(request.body.get)
 	post_body should equal ("username=test&password=pass")
-
       }
+
       "correspond to a URI of the form http://host/account/authenticate/ (in accordance with configuration)" in {
 	checkURI(request, "http", config.host, "/account/authenticate/") should be (true)
       }
@@ -44,10 +43,12 @@ class CallGeneratorSpec extends WordSpec with ShouldMatchers {
       val request = default_gen.authenticateUser().get
 
       "return a POST request" in { request.method should equal ("POST") }
+
       "have 'username=default&password=default' as POST body, with defaults from configuration" in {
 	val post_body = org.apache.http.util.EntityUtils.toString(request.body.get)
 	post_body should equal ("username=" + config.username + "&password=" + config.password)
       }
+
       "correspond to a URI of the form http://host/account/authenticate (in accordance with configuration)" in {
 	checkURI(request, "http", config.host, "/account/authenticate/") should be (true)
       }
@@ -147,7 +148,7 @@ class CallGeneratorSpec extends WordSpec with ShouldMatchers {
 
     val neo_id = "test"
 
-    "called" should {
+    "called without query specification" should {
 
       val request = default_gen.getData(neo_id).get
 
@@ -155,6 +156,16 @@ class CallGeneratorSpec extends WordSpec with ShouldMatchers {
       "produce URI corresponding to http://host/neo/data/id/" in {
 	checkURI(request, "http", config.host, "/neo/data/" + neo_id + "/") should be (true)
       }
+
+    }
+
+    "called with parameters" should {
+
+      val request = default_gen.getData(neo_id, Map("tes t" -> "%ds 33")).get
+
+      "return a GET request" in { (request method) should equal ("GET") }
+      "produce URI corresponding to http://host/neo/data/id/" in { checkURI(request, "http", config.host, "/neo/data/" + neo_id + "/") should be (true) }
+      "add escaped query variables" in { checkURI(request, "http", config.host, "/neo/data/" + neo_id + "/", "test+t=%ds+33") should be (true) }
 
     }
 
@@ -171,6 +182,5 @@ class CallGeneratorSpec extends WordSpec with ShouldMatchers {
     }
     
   }
-
 
 }

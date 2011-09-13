@@ -17,34 +17,48 @@ trait CallGenerator {
 
 class DefaultCallGenerator(val configuration: Configuration) extends CallGenerator {
 
-  lazy val short_basis = :/(configuration.host)
-  lazy val basis = :/(configuration.host) / configuration.path
+  private lazy val short_basis = :/(configuration.host)
+  private lazy val basis = :/(configuration.host) / configuration.path
+
+  private def pack(condition: Boolean = false)(request: Request): Option[Request] =
+    if (this.configuration.isIncomplete) None
+    else if (condition) throw new IllegalArgumentException
+    else Some(request)
 
   def authenticateUser(): Option[Request] = authenticateUser(configuration.username,
 							     configuration.password)
 
   def authenticateUser(username: String, password: String): Option[Request] =
-    if (configuration.isIncomplete) None else {
+    pack(false) {
       val post_body = "username=" + username + "&password=" + password
-      Some(short_basis / "account" / "authenticate" / "" << post_body)
+      short_basis / "account" / "authenticate" / "" << post_body
     }
 
   def createObject(): Option[Request] =
-    if (configuration.isIncomplete) None else Some((basis / "").PUT)
+    pack(false) { (basis / "").PUT }
 
   def updateObject(id: String): Option[Request] =
-    if (configuration.isIncomplete) None
-    else if (id.isEmpty) throw new IllegalArgumentException
-    else Some((basis / id / "").POST)
+    pack(id.isEmpty) {
+      (basis / id / "").POST
+    }
 
   def getObject(id: String): Option[Request] =
-    if (configuration.isIncomplete) None
-    else if (id.isEmpty) throw new IllegalArgumentException
-    else Some(basis / id / "")
+    pack(id.isEmpty) {
+      basis / id / ""
+    }
 
-  def getData(id: String): Option[Request] =
-    if (configuration.isIncomplete) None
-    else if (id.isEmpty) throw new IllegalArgumentException
-    else Some(basis / "data" / id / "")
-    
+  def getData(id: String, options: Map[String, String] = Map()): Option[Request] =
+    pack(id.isEmpty) {
+      basis / "data" / id / "" <<? options
+    }
+
+  // def getData(id: String,
+  // 	      startTime: Long,
+  // 	      endTime: Long,
+  // 	      duration: Long,
+  // 	      startIndex: Long,
+  // 	      endIndex: Long,
+  // 	      samplesCount: Long,
+  // 	      downsample: Long) = {}
+
 }
