@@ -25,8 +25,7 @@ trait CallGenerator {
 trait APIHelper {
 
   protected def pack(condition: Boolean = false, configuration: Configuration)(request: Request): Option[Request] =
-    if (configuration.isIncomplete) None
-    else if (condition) throw new IllegalArgumentException
+    if (configuration.isIncomplete || condition) None
     else Some(request)
 
 }
@@ -36,7 +35,7 @@ class DefaultAPI(config: Configuration) extends CallGenerator with APIHelper {
   private val configuration = config
   
   private val short_basis = :/(configuration.host)
-  private val basis = :/(configuration.host) / configuration.path
+  private val basis = short_basis / configuration.path
 
   def authenticateUser(): Option[Request] = authenticateUser(configuration.username,
 							     configuration.password)
