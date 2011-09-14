@@ -9,6 +9,8 @@ import net.liftweb.json.JsonParser.ParseException
 import dispatch._
 
 object NEOParser extends Loggable {
+  
+  def apply(data: String) = make(data)
 
   def make(data: String): NEObject =
     makeOpt(data).getOrElse(null)
@@ -62,6 +64,4 @@ object NEOParser extends Loggable {
     
   }
     
-  def apply(data: String) = make(data)
-
 }
