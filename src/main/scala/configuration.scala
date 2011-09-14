@@ -1,7 +1,7 @@
 package org.gnode.lib.conf
 
 import org.gnode.lib.util.Loggable
-import org.gnode.lib.util.{File => f}
+import org.gnode.lib.util.File._
 
 // Encapsulates configuration data. Emitted by ConfigurationReader; accepted by Connector.
 case class Configuration(username: String,
@@ -17,7 +17,6 @@ case class Configuration(username: String,
 }
     
 object ConfigurationReader extends Loggable {
-  
   
   /** Sane default configuration, hard-coded. */
   val default: Configuration = create("bob", "pass", "hal10.g-node.pri")
@@ -35,7 +34,7 @@ object ConfigurationReader extends Loggable {
 
     try {
 
-      f.using(io.Source.fromFile(filename)) { file =>
+      using(io.Source.fromFile(filename)) { file =>
 	fromString(file.mkString)
       }
 
