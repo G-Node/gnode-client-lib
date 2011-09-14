@@ -17,10 +17,8 @@ case class Configuration(username: String,
 }
     
 object ConfigurationReader extends Loggable {
-
-  // See: org.gnode.lib.util.Loggable
-  logInit(getClass.toString)
-
+  
+  
   /** Sane default configuration, hard-coded. */
   val default: Configuration = create("bob", "pass", "hal10.g-node.pri")
 
@@ -35,26 +33,24 @@ object ConfigurationReader extends Loggable {
   /** Wrapper around fromString for straightforward configuration loading from file */
   def fromFile(filename: String): Option[Configuration] = {
 
-    var config: Option[Configuration] = None
-
     try {
 
       f.using(io.Source.fromFile(filename)) { file =>
-	config = fromString(file.mkString)
+	fromString(file.mkString)
       }
 
     } catch {
 
       case e: java.io.FileNotFoundException => {
 	logger.error("Configuration file (" + filename + ") not found")
+	None
       }
       case _ => {
 	logger.error("Error while importing from file (" + filename + ")")
+	None
       }
 
     }
-
-    config
 
   }
 
