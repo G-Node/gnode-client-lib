@@ -10,11 +10,11 @@
     
     "host": "hal10.g-node.pri",
     "port": 80,
-    "path": "/",
+    "path": "neo",
 
-    "apiVersion": "v1"
+    "apiVersion": "v1",
 
-    "caching" : "ONLY_MEM"
+    "caching" : "ONLY_MEM",
     "db": null
     
 }
