@@ -18,4 +18,43 @@ object CacheType {
     case _ =>
       throw new IllegalArgumentException
 
-// class MongoCache extends
+  }
+
+}
+
+/* Cache factory. Produces an implementation of Cache that can be used
+   by the HTTP processor. */
+
+object Cache {
+
+  def apply(c: CacheType): Cache = c match {
+
+    case MONGO => new MongoCache
+    case SQLITE => new SqliteCache
+    case _ => new MemoryCache
+
+  }
+
+}
+
+abstract class Cache {
+
+  // Caching
+
+  def add(obj: NEObject, etag: String): Option[String]
+  def retrieve(id: String): Option[NEObject]
+  def delete(id: String)
+  def replace(id: String, obj: NEObject, etag: String): Option[String]
+
+}
+
+class MemoryCache extends Cache with Loggable {
+
+  case class CacheObject(obj: NEObject, etag: String)
+  
+  import scala.collection.mutable.Map
+  private val cache = new Map[String, CacheObject]
+  
+  //def add(obj: NEObject, etag: String): Option[String]
+
+}
