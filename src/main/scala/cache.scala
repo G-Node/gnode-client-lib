@@ -32,13 +32,12 @@ object Cache {
   
   def apply(c: CacheType): Cache = c match {
 
-    // case MONGO => new MongoCache
-    // case SQLITE => new SqliteCache
     case MEMORY => new MemoryCache
-    
     case _ => new MemoryCache
 
   }
+
+  def apply(c: String): Cache = apply(CacheType(c))
 
 }
 
