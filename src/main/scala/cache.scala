@@ -43,26 +43,8 @@ object Cache {
 
 abstract class Cache {
 
-  /* Caching
-
-  Suggested flow:
-  * Retrieving system checks if cache holds object with given ID
-    -> If not, retrieve/fail.
-  * If yes, retrieve E-Tag.
-  * Request with E-Tag. Check status code:
-    -> 200 + E-Tag
-	-> Store object in cache
-	-> Return
-    -> 304
-	-> Retrieve object from cache
-	-> Return
-  * If HTTP failure: Either return object from cache, or nothing!
-
-  */
-  
-  
   // Constructive
-  def add(obj: NEObject, etag: String)
+  def add(obj: NEObject, etag: String = "")
   def retrieve(id: String): Option[NEObject]
 
   // Destructive
