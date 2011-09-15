@@ -1,6 +1,7 @@
 package org.gnode.lib.cache
 
 import org.gnode.lib.neo.{NEOData, NEObject}
+import org.gnode.lib.util._
 
 sealed abstract class CacheType
 
@@ -26,11 +27,13 @@ object CacheType {
 /* Cache factory. Produces an implementation of Cache that can be used
    by the HTTP processor. */
 object Cache {
-
+  
+  import CacheType._
+  
   def apply(c: CacheType): Cache = c match {
 
-    case MONGO => new MongoCache
-    case SQLITE => new SqliteCache
+    // case MONGO => new MongoCache
+    // case SQLITE => new SqliteCache
     case MEMORY => new MemoryCache
     
     case _ => new MemoryCache
@@ -77,7 +80,7 @@ class MemoryCache extends Cache with Loggable {
   case class CacheObject(obj: NEObject, etag: String)
   
   import scala.collection.mutable.Map
-  private val cache = new Map[String, CacheObject]()
+  private val cache = Map[String, CacheObject]()
   
   def add(obj: NEObject, etag: String = "") {
 
