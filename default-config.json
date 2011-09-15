@@ -14,7 +14,7 @@
 
     "apiVersion": "v1",
 
-    "caching" : "ONLY_MEM",
-    "db": null
+    "caching" : "MEMORY",
+    "db": ""
     
 }

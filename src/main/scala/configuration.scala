@@ -9,7 +9,9 @@ case class Configuration(username: String,
 			 host: String,
 			 port: Int,
 			 path: String,
-			 apiVersion: String) {
+			 apiVersion: String,
+			 caching: String,
+			 db: String) {
 
   def isIncomplete(): Boolean =
     host.isEmpty || port == 0
@@ -27,7 +29,9 @@ object ConfigurationReader extends Loggable {
 	     host: String,
 	     port: Int = 80,
 	     path: String = "neo",
-	     apiVersion: String = "v1") = Configuration(username, password, host, port, path, apiVersion)
+	     apiVersion: String = "v1"
+	     caching: String = "MEMORY",
+	     db: String = "") = Configuration(username, password, host, port, path, apiVersion)
 
   /** Wrapper around fromString for straightforward configuration loading from file */
   def fromFile(filename: String): Option[Configuration] = {
