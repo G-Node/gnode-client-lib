@@ -20,9 +20,6 @@ case class Configuration(username: String,
     
 object ConfigurationReader extends Loggable {
   
-  /** Sane default configuration, hard-coded. */
-  val default: Configuration = create("bob", "pass", "hal10.g-node.pri")
-
   /** Parameterized configuration generator. */
   def create(username: String, 
 	     password: String,
