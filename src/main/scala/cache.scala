@@ -15,6 +15,7 @@ object CacheType {
     case "MONGO" => MONGO
     case "SQLITE" => SQLITE
     case "MEMORY" => MEMORY
+
     case _ =>
       throw new IllegalArgumentException
 
@@ -24,13 +25,14 @@ object CacheType {
 
 /* Cache factory. Produces an implementation of Cache that can be used
    by the HTTP processor. */
-
 object Cache {
 
   def apply(c: CacheType): Cache = c match {
 
     case MONGO => new MongoCache
     case SQLITE => new SqliteCache
+    case MEMORY => new MemoryCache
+    
     case _ => new MemoryCache
 
   }
