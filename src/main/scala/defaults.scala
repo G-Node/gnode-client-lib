@@ -1,9 +1,9 @@
 package org.gnode.lib.conf
 
-object Defaults {
+object Default {
 
-  val DEFAULT_CONFIGURATION = ConfigurationReader.create("ray",
-							 "pass",
-							 "hal10.g-node.pri")
+  val CONFIGURATION = ConfigurationReader.create("ray",
+						 "pass",
+						 "hal10.g-node.pri")
 
 }
