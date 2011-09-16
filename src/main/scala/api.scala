@@ -41,6 +41,12 @@ class DefaultAPI(config: Configuration) extends CallGenerator with APIHelper {
   private val short_basis = :/(configuration.host)
   private val basis = short_basis / configuration.path
 
+  // Nasty hack -- TODO: Tell Andrey to get this shit right?
+  private def split(id: String) = {
+    val pos = id.indexOf("_")
+    (id.substring(0, pos), id.substring(pos + 1))
+  }
+
   def authenticateUser(): Option[Request] = authenticateUser(configuration.username,
 							     configuration.password)
 
@@ -60,7 +66,7 @@ class DefaultAPI(config: Configuration) extends CallGenerator with APIHelper {
 
   def getObject(id: String): Option[Request] =
     pack(id.isEmpty, configuration) {
-      basis / id / ""
+      basis / split(id)._1 / split(id)._2 / ""
     }
 
   def getData(id: String, options: Map[String, String] = Map()): Option[Request] =
