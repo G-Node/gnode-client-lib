@@ -20,5 +20,15 @@ trait HttpInteractor extends Loggable {
 
 }
 
-//   private val cache = new Cache
-// class Uploader extends HttpInteractor
+class TransactionManager(config: Configuration) extends HttpInteractor {
+
+  // Call generation
+  import org.gnode.lib.api._
+
+  val d = new Downloader
+  val u = new Uploader
+  
+}
+
+class Downloader
+class Uploader
