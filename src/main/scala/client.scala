@@ -27,19 +27,74 @@ class TransferManager(private val config: Configuration) extends HttpInteractor 
 
   private val d = new Downloader(config, http)
   private val u = new Uploader(config, http)
+  private val a = new Authenticator(config, http)
+
+  private def authenticated[T](block: => T): T =
+    if (!a.authenticated) {
+      a.authenticate()
+      block
+    } else {
+      block
+    }
 
   def retrieveSingle(id: String): Option[NEObject] = {
-    d.add(id)
-    d get match {
-      case o :: tail => Some(o)
-      case List() => None
-      case _ => None
+
+    authenticated {
+      d.add(id)
+      d get match {
+	case o :: tail => Some(o)
+	case List() => None
+	case _ => None
+      }
     }
+
   }
   
 }
 
-class Authenticator(private val config: Configuration, private val http: Http)
+class Authenticator(private val config: Configuration, private val http: Http) extends Loggable {
+
+  lazy val caller = CallGenerator(config)
+  var authenticated = false
+  
+  def authenticate(): Boolean = {
+    authenticate(config.username, config.password)
+  }
+
+  def authenticate(username: String, password: String): Boolean = {
+
+    logger.info("Performing authentication for user " + username)
+    
+    val request = caller.authenticateUser(username, password) match {
+      case Some(r) => r
+      case _ => return false
+    }
+
+    try {
+
+      val handler = request as_str
+
+      val body = http(handler)
+      authenticated = true
+      return true
+
+    } catch {
+
+      case StatusCode(401, message) =>
+	logger.error("Failure to authenticate for user " + username)
+      case StatusCode(code, message) =>
+	logger.error("General HTTP error " + code.toString + "(" + message + ")")
+      case _ =>
+	logger.error("General error while authenticating user " + username)
+      
+    }
+
+    authenticated = false
+    return false
+
+  }
+
+}
 
 trait BatchTransfer extends Loggable {
 
@@ -90,13 +145,21 @@ class Downloader(private val config: Configuration, private val http: Http) exte
       }
 
     } catch {
+      
+      // Cacheable
+      case StatusCode(304, _) =>
+	logger.info("Cache hit for " + id + "@" + tag.getOrElse(""))
+	return cache.retrieve(id)
+      case e: java.net.NoRouteToHostException =>
+	logger.info("Disconnected. Trying cache for " + id + "@" + tag.getOrElse(""))
+	cache.retrieve(id) match {
+	  case Some(o) => logger.info("Cache hit for " + id + "@" + tag.getOrElse("")); return Some(o)
+	  case None => logger.info("Cache miss"); return None
+	}
 
       case StatusCode(404, _) =>
 	logger.error("Object " + id + " was not found")
 	return None
-      case StatusCode(304, _) =>
-	logger.info("Cache hit for " + id + "@" + tag.getOrElse(""))
-	return cache.retrieve(id)
       case StatusCode(code, message) =>
 	logger.error("Generic HTTP error " + code.toString + " (" + message + ")")
 	return None
