@@ -3,6 +3,10 @@ package org.gnode.lib.api
 import dispatch._
 import org.gnode.lib.conf._
 
+object CallGenerator {
+  def apply(config: Configuration): CallGenerator = new DefaultAPI(config)
+}
+
 trait CallGenerator {
 
   def authenticateUser(): Option[Request]
