@@ -11,6 +11,9 @@ import org.gnode.lib.parse._
 // External packages
 import dispatch._
 
+// Make log messages available globally
+import LogMessages._
+
 trait HttpInteractor extends Loggable {
   
   // Create custom Http object that uses library-wide Twttr logging
@@ -24,6 +27,7 @@ trait HttpInteractor extends Loggable {
   }
 
   def kill() {
+    logger info HTTP_SHUTDOWN
     http.shutdown()
   }
 
@@ -73,7 +77,7 @@ class Authenticator(private val config: Configuration, private val http: Http) e
 
   def authenticate(username: String, password: String): Boolean = {
 
-    logger.info("Performing authentication for user " + username)
+    logger info AUTHENTICATE_BEGIN(username)
     
     val request = caller.authenticateUser(username, password) match {
       case Some(r) => r
@@ -85,21 +89,22 @@ class Authenticator(private val config: Configuration, private val http: Http) e
       val handler = request as_str
 
       val body = http(handler)
-      authenticated = true
+      auth = true
       return true
 
     } catch {
 
       case StatusCode(401, message) =>
-	logger.error("Failure to authenticate for user " + username)
+	logger error AUTHENTICATE_FAILURE(username)
       case StatusCode(code, message) =>
-	logger.error("General HTTP error " + code.toString + "(" + message + ")")
+	logger error HTTP_GENERAL(code, message)
+      	logger error AUTHENTICATE_ERROR(username)
       case _ =>
-	logger.error("General error while authenticating user " + username)
+	logger error AUTHENTICATE_ERROR(username)
       
     }
 
-    authenticated = false
+    auth = false
     return false
 
   }
@@ -124,7 +129,7 @@ class Downloader(private val config: Configuration, private val http: Http) exte
 
   def list(objectType: String, limit: Int = 0): Option[List[String]] = {
 
-    logger.info("Retrieving list for type " + objectType)
+    logger info RETRIEVE_LIST_START(objectType)
     
     val request = caller.getList(objectType, limit) match {
       case Some(r) => r
@@ -141,16 +146,16 @@ class Downloader(private val config: Configuration, private val http: Http) exte
     } catch {
 
       case e: ExtractError =>
-	logger.error("Problem while parsing object list")
+	logger error RETRIEVE_LIST_ERROR_PARSE(objectType)
 	return None
       case StatusCode(404, _) =>
-	logger.error("Object type doesn't exist")
+	logger error RETRIEVE_LIST_ERROR_404(objectType)
 	return None
-      case StatusCode(x, _) =>
-	logger.error("Generic HTTP error (" + x.toString + ")")
+      case StatusCode(code, message) =>
+	logger error HTTP_GENERAL(code, message)
 	return None
       case _ =>
-	logger.error("Generic error")
+	logger error RETRIEVE_LIST_ERROR_GENERIC(objectType)
 	return None
 
     }
@@ -187,7 +192,7 @@ class Downloader(private val config: Configuration, private val http: Http) exte
 	  cache.replace(id, o, info.head)
 	  return obj
 	case None =>
-	  logger.error("Could not parse " + id)
+	  logger error PARSE_ERROR(id)
 	  return None
       }
 
@@ -195,27 +200,27 @@ class Downloader(private val config: Configuration, private val http: Http) exte
       
       // Cacheable
       case StatusCode(304, _) =>
-	logger.info("Cache hit for " + id + "@" + tag.getOrElse(""))
+	logger info CACHE_HIT(id, tag.getOrElse(""))
 	return cache.retrieve(id)
       case e: java.net.NoRouteToHostException =>
-	logger.info("Disconnected. Trying cache for " + id + "@" + tag.getOrElse(""))
+	logger info CACHE_TRY(id, tag.getOrElse(""))
 	cache.retrieve(id) match {
-	  case Some(o) => logger.info("Cache hit for " + id + "@" + tag.getOrElse("")); return Some(o)
-	  case None => logger.info("Cache miss"); return None
+	  case Some(o) => logger info CACHE_HIT(id, tag.getOrElse("")); return Some(o)
+	  case None => logger info CACHE_MISS(id, tag.getOrElse("")); return None
 	}
 
       // Non-cacheable
       case StatusCode(404, _) =>
-	logger.error("Object " + id + " was not found")
+	logger error RETRIEVE_OBJECT_ERROR_404(id)
 	return None
       case StatusCode(401, _) =>
-	logger.error("You are not authorised to request object " + id)
+	logger error RETRIEVE_OBJECT_ERROR_NOT_AUTHORISED(id)
 	return None
       case StatusCode(code, message) =>
-	logger.error("Generic HTTP error " + code.toString + " (" + message + ")")
+	logger error HTTP_GENERAL(code, message)
 	return None
       case e =>
-	logger.error("Unknown error while retrieving " + id + " (" + e + ")")
+	logger error RETRIEVE_OBJECT_ERROR_GENERIC(id)
 	return None
 
     }
@@ -224,7 +229,7 @@ class Downloader(private val config: Configuration, private val http: Http) exte
     
   def add(id: String) {
     jobs enqueue Job(id)
-    logger info "Enqueued new download job: " + id
+    logger info JOB_ADD(id)
   }
 
   def get() = {
@@ -238,9 +243,9 @@ class Downloader(private val config: Configuration, private val http: Http) exte
 
       obj match {
 	case Some(o: NEObject) =>
-	  logger info "Job successfully completed: " + job.id
+	  logger info JOB_COMPLETE(job.id)
 	  b += o
-	case _ => logger error "Job failure: " + job.id
+	case _ => logger error JOB_FAILURE(job.id)
       }
 
     }
