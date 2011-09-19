@@ -51,7 +51,16 @@ class TransferManager(private val config: Configuration) extends HttpInteractor 
       }
     }
 
-  }
+  def retrieveMany(ids: List[String]) =
+    authenticated {
+      ids foreach d.add
+      d get
+    }
+
+  def retrieveList(objectType: String, limit: Int = 0) =
+    authenticated {
+      d.list(objectType, limit)
+    }
   
 }
 
@@ -110,9 +119,46 @@ trait BatchTransfer extends Loggable {
 
 class Downloader(private val config: Configuration, private val http: Http) extends BatchTransfer {
 
+  import org.gnode.lib.parse.ExtractError
+
   lazy val caller = CallGenerator(config)
   lazy val cache = Cache(config.caching)
-  
+
+  def list(objectType: String, limit: Int = 0): Option[List[String]] = {
+
+    logger.info("Retrieving list for type " + objectType)
+    
+    val request = caller.getList(objectType, limit) match {
+      case Some(r) => r
+      case None => throw new IllegalArgumentException
+    }
+
+    val handler = request as_str
+
+    try {
+
+      val body = http(handler)
+      return Reader.makeListOpt(body)
+      
+    } catch {
+
+      case e: ExtractError =>
+	logger.error("Problem while parsing object list")
+	return None
+      case StatusCode(404, _) =>
+	logger.error("Object type doesn't exist")
+	return None
+      case StatusCode(x, _) =>
+	logger.error("Generic HTTP error (" + x.toString + ")")
+	return None
+      case _ =>
+	logger.error("Generic error")
+	return None
+
+    }
+
+  }
+
   private def pull(id: String): Option[NEObject] = {
     
     val tag = cache.objectTag(id)
