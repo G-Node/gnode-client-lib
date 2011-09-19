@@ -21,7 +21,7 @@ trait CallGenerator {
   def getParents(id: String): Option[Request]
   def getChildren(id: String): Option[Request]
 
-  def getList(id: String, options: Map[String, String] = Map()): Option[Request]
+  def getList(id: String, limit: Int = 0): Option[Request]
   def assign(id: String, options: Map[String, String] = Map()): Option[Request]
 
 }
@@ -41,7 +41,7 @@ class DefaultAPI(config: Configuration) extends CallGenerator with APIHelper {
   private val short_basis = :/(configuration.host)
   private val basis = short_basis / configuration.path
 
-  // Nasty hack -- TODO: Tell Andrey to get this shit right?
+  // Nasty hack -- TODO: Discuss
   private def split(id: String) = {
     val pos = id.indexOf("_")
     (id.substring(0, pos), id.substring(pos + 1))
@@ -84,9 +84,9 @@ class DefaultAPI(config: Configuration) extends CallGenerator with APIHelper {
       basis / "children" / id / ""
     }
 
-  def getList(objectType: String, options: Map[String, String]): Option[Request] =
+  def getList(objectType: String, limit: Int = 0): Option[Request] =
     pack(objectType.isEmpty, configuration) {
-      basis / "select" / objectType / "" <<? options
+      basis / objectType / "" <<? Map("range_start" -> limit.toString)
     }
 
   def assign(id: String, options: Map[String, String]): Option[Request] =
