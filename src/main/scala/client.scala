@@ -143,7 +143,7 @@ class Downloader(private val config: Configuration, private val http: Http) exte
 	  cache.replace(id, o, info.head)
 	  return obj
 	case None =>
-	  logger.error("Could not retrieve " + id)
+	  logger.error("Could not parse " + id)
 	  return None
       }
 
@@ -160,6 +160,7 @@ class Downloader(private val config: Configuration, private val http: Http) exte
 	  case None => logger.info("Cache miss"); return None
 	}
 
+      // Non-cacheable
       case StatusCode(404, _) =>
 	logger.error("Object " + id + " was not found")
 	return None
