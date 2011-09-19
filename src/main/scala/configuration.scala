@@ -24,11 +24,11 @@ object ConfigurationReader extends Loggable {
   def create(username: String, 
 	     password: String,
 	     host: String,
-	     port: Int = 80,
-	     path: String = "neo",
-	     apiVersion: String = "v1",
-	     caching: String = "MEMORY",
-	     db: String = "") = Configuration(username, password, host, port, path, apiVersion, caching, db)
+	     port: Int,
+	     path: String,
+	     apiVersion: String,
+	     caching: String,
+	     db: String) = Configuration(username, password, host, port, path, apiVersion, caching, db)
 
   /** Wrapper around fromString for straightforward configuration loading from file */
   def fromFile(filename: String): Option[Configuration] = {
