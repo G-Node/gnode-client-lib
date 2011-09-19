@@ -43,8 +43,12 @@ class DefaultAPI(config: Configuration) extends CallGenerator with APIHelper {
 
   // Nasty hack -- TODO: Discuss
   private def split(id: String) = {
-    val pos = id.indexOf("_")
-    (id.substring(0, pos), id.substring(pos + 1))
+    try {
+      val pos = id.indexOf("_")
+      (id.substring(0, pos), id.substring(pos + 1))
+    } catch {
+      case _ => ("", "")
+    }
   }
 
   def authenticateUser(): Option[Request] = authenticateUser(configuration.username,
