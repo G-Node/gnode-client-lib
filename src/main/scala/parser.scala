@@ -5,6 +5,8 @@ import org.gnode.lib.util._
 import org.gnode.lib.api._
 
 import net.liftweb.json._
+import net.liftweb.json.JsonParser.ParseException
+
 import dispatch._
 
 class ExtractError extends Exception("NEO object could not be parsed")
@@ -12,6 +14,28 @@ class ExtractError extends Exception("NEO object could not be parsed")
 object Reader extends Loggable {
   
   def apply(data: String) = makeObject(data)
+
+  def makeListOpt(data: String): Option[List[String]] = {
+
+    var p: Option[JValue] = None
+    
+    try {
+      p = Some(parse(data))
+    } catch {
+      case e: ParseException =>
+	logger.error("Parse exception occured")
+	return None
+      case _ =>
+	logger.error("Unknown error occured")
+	return None
+    }
+
+    val parsedData = p get
+
+    return Some(for { JField("selected", JArray(list)) <- parsedData
+		       JString(value) <- list } yield value)
+
+  }
 
   def makeObject(data: String): NEObject =
     makeObjectOpt(data) match {
@@ -22,7 +46,6 @@ object Reader extends Loggable {
   def makeObjectOpt(data: String): Option[NEObject] = {
     
     import scala.collection.mutable.{ListBuffer, Map => MuMap}
-    import net.liftweb.json.JsonParser.ParseException
 
     var p: Option[JValue] = None
     
