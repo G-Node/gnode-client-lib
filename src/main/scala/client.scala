@@ -126,6 +126,10 @@ trait BatchTransfer extends Loggable {
   import scala.collection.mutable.Queue
   val jobs = Queue[Job]()
 
+  def clear {
+    jobs clear
+  }
+
 }
 
 class Downloader(private val config: Configuration, private val http: Http) extends BatchTransfer {
