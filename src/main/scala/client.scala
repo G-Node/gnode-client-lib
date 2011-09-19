@@ -21,6 +21,10 @@ trait HttpInteractor extends Loggable {
     }
   }
 
+  def kill() {
+    http.shutdown()
+  }
+
 }
 
 class TransferManager(private val config: Configuration) extends HttpInteractor {
