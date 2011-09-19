@@ -41,13 +41,12 @@ class TransferManager(private val config: Configuration) extends HttpInteractor 
       block
     }
 
-  def retrieveSingle(id: String): Option[NEObject] = {
-
+  def retrieveSingle(id: String) =
     authenticated {
       d.add(id)
       d get match {
-	case o :: tail => Some(o)
-	case List() => None
+	case Some(o :: tail) => Some(o)
+	case Some(List()) => None
 	case _ => None
       }
     }
@@ -183,7 +182,7 @@ class Downloader(private val config: Configuration, private val http: Http) exte
     logger info "Enqueued new download job: " + id
   }
 
-  def get(): List[NEObject] = {
+  def get() = {
 
     import scala.collection.mutable.ListBuffer
     val b = ListBuffer[NEObject]()
@@ -193,13 +192,15 @@ class Downloader(private val config: Configuration, private val http: Http) exte
       val obj = pull(job.id)
 
       obj match {
-	case Some(o: NEObject) => b += o
+	case Some(o: NEObject) =>
+	  logger info "Job successfully completed: " + job.id
+	  b += o
 	case _ => logger error "Job failure: " + job.id
       }
 
     }
 
-    b.toList
+    Some(b.toList)
 
   }
 
