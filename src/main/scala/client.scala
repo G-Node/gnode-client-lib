@@ -164,6 +164,9 @@ class Downloader(private val config: Configuration, private val http: Http) exte
       case StatusCode(404, _) =>
 	logger.error("Object " + id + " was not found")
 	return None
+      case StatusCode(401, _) =>
+	logger.error("You are not authorised to request object " + id)
+	return None
       case StatusCode(code, message) =>
 	logger.error("Generic HTTP error " + code.toString + " (" + message + ")")
 	return None
