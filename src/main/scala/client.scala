@@ -1,5 +1,6 @@
 package org.gnode.lib.client
 
+// Internal packages
 import org.gnode.lib.cache._
 import org.gnode.lib.util._
 import org.gnode.lib.conf._
@@ -7,6 +8,7 @@ import org.gnode.lib.neo._
 import org.gnode.lib.api._
 import org.gnode.lib.parse._
 
+// External packages
 import dispatch._
 
 trait HttpInteractor extends Loggable {
@@ -29,17 +31,13 @@ trait HttpInteractor extends Loggable {
 
 class TransferManager(private val config: Configuration) extends HttpInteractor {
 
+  // Delegator
   private val d = new Downloader(config, http)
   private val u = new Uploader(config, http)
   private val a = new Authenticator(config, http)
 
-  private def authenticated[T](block: => T): T =
-    if (!a.authenticated) {
-      a.authenticate()
-      block
-    } else {
-      block
-    }
+  // Put "authenticated" in scope
+  import a._
 
   def retrieveSingle(id: String) =
     authenticated {
