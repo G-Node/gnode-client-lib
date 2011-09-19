@@ -69,7 +69,15 @@ class TransferManager(private val config: Configuration) extends HttpInteractor 
 class Authenticator(private val config: Configuration, private val http: Http) extends Loggable {
 
   lazy val caller = CallGenerator(config)
-  var authenticated = false
+  var auth = false
+
+  def authenticated[T](block: => T): T =
+    if (!this.auth) {
+      this.authenticate()
+      block
+    } else {
+      block
+    }
   
   def authenticate(): Boolean = {
     authenticate(config.username, config.password)
