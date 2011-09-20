@@ -12,7 +12,7 @@
     "port": 80,
     "path": "neo",
 
-    "apiVersion": "v1",
+    "apiDefinition": "requirements.json",
 
     "caching" : "MEMORY",
     "db": ""

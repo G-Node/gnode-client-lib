@@ -9,7 +9,7 @@ object Default {
 						 "hal10.g-node.pri",
 						 80,
 						 "neo",
-						 "v1",
+						 "requirements.json",
 						 "MEMORY",
 						 "")
 
