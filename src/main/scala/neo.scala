@@ -10,7 +10,12 @@ case class NEOData(units: String,
 class NEObject(val stringInfo: Map[String, String] = Map[String, String](),
 	       val numInfo: Map[String, Double] = Map[String, Double](),
 	       val data: Map[String, NEOData] = Map[String, NEOData](),
-	       val relations: Map[String, List[String]] = Map[String, List[String]]())
+	       val relations: Map[String, List[String]] = Map[String, List[String]]()) {
+
+  def isDefinedAt(key: String) =
+    (stringInfo.isDefinedAt(key) || numInfo.isDefinedAt(key) || data.isDefinedAt(key) || relations.isDefinedAt(key))
+
+}
 
 class NEOBuilder {
 
