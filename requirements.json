@@ -1,0 +1,226 @@
+{
+    "spiketrain": {
+        "attributes": [], 
+        "required": [], 
+        "parents": [
+            "segment", 
+            "unit"
+        ], 
+        "children": [], 
+        "data_fields": [
+            "t_start", 
+            "t_stop", 
+            "times", 
+            "waveforms"
+        ]
+    }, 
+    "irsaanalogsignal": {
+        "attributes": [
+            "name"
+        ], 
+        "required": [
+            "name"
+        ], 
+        "parents": [
+            "segment", 
+            "recordingchannel"
+        ], 
+        "children": [], 
+        "data_fields": [
+            "t_start", 
+            "signal", 
+            "times"
+        ]
+    }, 
+    "analogsignalarray": {
+        "attributes": [], 
+        "required": [], 
+        "parents": [
+            "segment"
+        ], 
+        "children": [
+            "analogsignal"
+        ], 
+        "data_fields": []
+    }, 
+    "recordingchannelgroup": {
+        "attributes": [
+            "name"
+        ], 
+        "required": [
+            "name"
+        ], 
+        "parents": [
+            "block"
+        ], 
+        "children": [
+            "recordingchannel", 
+            "analogsignalarray"
+        ], 
+        "data_fields": []
+    }, 
+    "eventarray": {
+        "attributes": [], 
+        "required": [], 
+        "parents": [
+            "segment"
+        ], 
+        "children": [
+            "event"
+        ], 
+        "data_fields": []
+    }, 
+    "analogsignal": {
+        "attributes": [
+            "name"
+        ], 
+        "required": [
+            "name"
+        ], 
+        "parents": [
+            "segment", 
+            "analogsignalarray", 
+            "recordingchannel"
+        ], 
+        "children": [], 
+        "data_fields": [
+            "sampling_rate", 
+            "t_start", 
+            "signal"
+        ]
+    }, 
+    "epoch": {
+        "attributes": [
+            "label"
+        ], 
+        "required": [
+            "label"
+        ], 
+        "parents": [
+            "segment", 
+            "epocharray"
+        ], 
+        "children": [], 
+        "data_fields": [
+            "time", 
+            "duration"
+        ]
+    }, 
+    "unit": {
+        "attributes": [
+            "name"
+        ], 
+        "required": [
+            "name"
+        ], 
+        "parents": [
+            "recordingchannel"
+        ], 
+        "children": [
+            "spiketrain", 
+            "spike"
+        ], 
+        "data_fields": []
+    }, 
+    "recordingchannel": {
+        "attributes": [
+            "name", 
+            "index"
+        ], 
+        "required": [
+            "name"
+        ], 
+        "parents": [
+            "recordingchannelgroup"
+        ], 
+        "children": [
+            "unit", 
+            "analogsignal", 
+            "irsaanalogsignal"
+        ], 
+        "data_fields": []
+    }, 
+    "spike": {
+        "attributes": [], 
+        "required": [], 
+        "parents": [
+            "segment", 
+            "unit"
+        ], 
+        "children": [], 
+        "data_fields": [
+            "left_sweep", 
+            "time", 
+            "sampling_rate", 
+            "waveforms"
+        ]
+    }, 
+    "epocharray": {
+        "attributes": [], 
+        "required": [], 
+        "parents": [
+            "segment"
+        ], 
+        "children": [
+            "epoch"
+        ], 
+        "data_fields": []
+    }, 
+    "segment": {
+        "attributes": [
+            "name", 
+            "filedatetime", 
+            "index"
+        ], 
+        "required": [
+            "name"
+        ], 
+        "parents": [
+            "block"
+        ], 
+        "children": [
+            "analogsignal", 
+            "irsaanalogsignal", 
+            "analogsignalarray", 
+            "spiketrain", 
+            "spike", 
+            "event", 
+            "eventarray", 
+            "epoch", 
+            "epocharray"
+        ], 
+        "data_fields": []
+    }, 
+    "event": {
+        "attributes": [
+            "label"
+        ], 
+        "required": [
+            "label"
+        ], 
+        "parents": [
+            "segment", 
+            "eventarray"
+        ], 
+        "children": [], 
+        "data_fields": [
+            "time"
+        ]
+    }, 
+    "block": {
+        "attributes": [
+            "name", 
+            "filedatetime", 
+            "index"
+        ], 
+        "required": [
+            "name"
+        ], 
+        "parents": [], 
+        "children": [
+            "segment", 
+            "recordingchannelgroup"
+        ], 
+        "data_fields": []
+    }
+}
