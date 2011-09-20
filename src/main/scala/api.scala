@@ -32,6 +32,16 @@ trait APIHelper {
     if (configuration.isIncomplete || condition) None
     else Some(request)
 
+  // Nasty hack -- TODO: Discuss
+  def split(id: String) = {
+    try {
+      val pos = id.indexOf("_")
+      (id.substring(0, pos), id.substring(pos + 1))
+    } catch {
+      case _ => ("", "")
+    }
+  }
+
 }
 
 class DefaultAPI(config: Configuration) extends CallGenerator with APIHelper {
@@ -40,16 +50,6 @@ class DefaultAPI(config: Configuration) extends CallGenerator with APIHelper {
   
   private val short_basis = :/(configuration.host)
   private val basis = short_basis / configuration.path
-
-  // Nasty hack -- TODO: Discuss
-  private def split(id: String) = {
-    try {
-      val pos = id.indexOf("_")
-      (id.substring(0, pos), id.substring(pos + 1))
-    } catch {
-      case _ => ("", "")
-    }
-  }
 
   def authenticateUser(): Option[Request] = authenticateUser(configuration.username,
 							     configuration.password)
