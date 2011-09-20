@@ -9,4 +9,4 @@ case class NEOData(units: String,
 
 class NEObject(val stringInfo: Map[String, String],
 	       val numInfo: Map[String, Double],
-	       val data: Map[String, NEOData]) {
+	       val data: Map[String, NEOData])

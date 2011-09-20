@@ -12,6 +12,7 @@ object LogMessages {
   
   // General errors
   def HTTP_GENERAL(code: Int, message: String) = "General HTTP error (%d): %s".format(code, message)
+  def FILE_NOT_FOUND(file: String) = "File@%s could not be found".format(file)
   
   // org.gnode.lib.client.Downloader
   def RETRIEVE_LIST_START(t: String) = "Retrieving list for type %s".format(t)
@@ -34,5 +35,9 @@ object LogMessages {
   def JOB_FAILURE(id: String) = "Failed to complete job: %s".format(id)
 
   def PARSE_ERROR(id: String) = "Could not parse %s".format(id)
+
+  // org.gnode.lib.parse.{Reader, Writer}
+  def READ_ERROR_PARSE = "Parse exception occurred"
+  def READ_ERROR_UNKNOWN = "Unknown error occurred while parsing"
 
 }

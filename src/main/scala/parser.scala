@@ -9,7 +9,13 @@ import net.liftweb.json.JsonParser.ParseException
 
 import dispatch._
 
+import org.gnode.lib.conf.LogMessages._
+
 class ExtractError extends Exception("NEO object could not be parsed")
+
+object Writer extends Loggable {
+
+}
 
 object Reader extends Loggable {
   
@@ -23,10 +29,10 @@ object Reader extends Loggable {
       p = Some(parse(data))
     } catch {
       case e: ParseException =>
-	logger.error("Parse exception occured")
+	logger error READ_ERROR_PARSE
 	return None
       case _ =>
-	logger.error("Unknown error occured")
+	logger error READ_ERROR_UNKNOWN
 	return None
     }
 
@@ -53,10 +59,10 @@ object Reader extends Loggable {
       p = Some(parse(data))
     } catch {
       case e: ParseException =>
-	logger.error("Parse exception occured")
+	logger error READ_ERROR_PARSE
 	return None
       case _ =>
-	logger.error("Unknown error occured")
+	logger error READ_ERROR_UNKNOWN
 	return None
     }
 
