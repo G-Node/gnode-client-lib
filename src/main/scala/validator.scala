@@ -1,10 +1,11 @@
-package org.gnode.lib.validation
+package org.gnode.lib.validate
 
 import org.gnode.lib.neo._
 import org.gnode.lib.conf._
 import org.gnode.lib.parse._
 import org.gnode.lib.util._
 import org.gnode.lib.util.File._
+import org.gnode.lib.api.APIHelper
 
 import net.liftweb.json._
 import scala.collection.mutable.Map
@@ -23,6 +24,7 @@ class Validator(private val config: Configuration) extends Loggable {
     readContractFromFile(config.apiDefinition).getOrElse(Map[String, Contract]())
 
   // CONTRACT EXTRACTION METHODS
+
   private def readContractFromFile(path: String): Option[Map[String, Contract]] =
     try {
       using(io.Source.fromFile(path)) { file =>
@@ -63,7 +65,32 @@ class Validator(private val config: Configuration) extends Loggable {
 
   // VALIDATION METHODS
 
-  def validate(obj: NEObject): Boolean =
-    true
+  def validate(obj: NEObject, upload: Boolean): Boolean =
+    // Attempt to guess object type
+    if (obj.isDefinedAt("neo_id")) {
+
+      val t = (new APIHelper {}).split(obj.stringInfo("neo_id"))._1
+      validate(obj, t, upload)
+
+    } else if (obj.isDefinedAt("obj_type")) {
+
+      val t = obj.stringInfo("obj_type")
+      validate(obj, t, upload)
+
+    } else {
+
+      throw new IllegalArgumentException
+
+    }
+
+  def validate(obj: NEObject, objectType: String, upload: Boolean): Boolean = {
+
+    if (!contract.isDefinedAt(objectType)) throw new IllegalArgumentException
+    val reqs = (if (upload) List("obj_type") else Nil) ::: contract(objectType).required
+
+    // Negative check -- any required fields missing?
+    reqs forall { obj.isDefinedAt(_) }
+
+  }
 
 }
