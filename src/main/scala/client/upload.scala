@@ -16,9 +16,28 @@ import LogMessages._
 
 class Uploader(private val config: Configuration, private val http: Http) extends BatchTransfer {
 
-  // private def pushNew(obj: NEObject): Option[String] = {
-   
-  // }
+  import org.gnode.lib.parse.ExtractError
+  lazy val caller = CallGenerator(config)
+
+  private def pushNew(o: NEObject, objectType: String): Option[String] = {
+
+    import dispatch.liftjson.Js._
+    import net.liftweb.json.JsonAST._
+
+    val request = (caller.createObject(objectType) match {
+      case Some(r) => r
+      case None => throw new IllegalArgumentException
+    }) <<< Writer.serialize(o).getOrElse("")
+
+    val handler = request ># { json =>
+      (json \ "neo_id") match {
+	case JString(id) => id
+	case _ => "NO_ID"
+      }}
+
+    Some(http(handler))
+
+  }
     
   // private def pushExisting(id: String, obj: NEObject): Boolean
 
