@@ -63,12 +63,30 @@ class TransferManager(private val config: Configuration) extends HttpInteractor 
     authenticated {
       d.list(objectType, limit)
     }
+
+  def createSingle(o: NEObject, objectType: String) =
+    authenticated {
+      u add ("", o, Some(objectType))
+      u push
+    }
+
+  def createMany(o: List[NEObject], objectType: String) =
+    authenticated {
+      o foreach { u add ("", _, Some(objectType)) }
+      u push
+    }
+
+  def createMany(o: List[(NEObject, String)]) =
+    authenticated {
+      o foreach { pair => u add ("", pair._1, Some(pair._2)) }
+      u push
+    }
   
 }
 
 trait BatchTransfer extends Loggable {
 
-  case class Job(id: String, obj: Option[NEObject] = None)
+  case class Job(id: String, obj: Option[NEObject] = None, objectType: Option[String] = None)
 
   import scala.collection.mutable.Queue
   val jobs = Queue[Job]()
