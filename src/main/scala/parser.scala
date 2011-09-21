@@ -3,6 +3,7 @@ package org.gnode.lib.parse
 import org.gnode.lib.neo._
 import org.gnode.lib.util._
 import org.gnode.lib.api._
+import org.gnode.lib.validate._
 
 import net.liftweb.json._
 import net.liftweb.json.JsonParser.ParseException
@@ -15,12 +16,28 @@ class ExtractError extends Exception("NEO object could not be parsed")
 
 object Writer extends Loggable {
 
+  import net.liftweb.json.JsonDSL._
+  import net.liftweb.json.JsonAST._
+  import net.liftweb.json.Extraction._
+  import net.liftweb.json.Printer._
+
+  implicit val formats = DefaultFormats + FieldSerializer[NEOData]()
+
+  def serializeNew(obj: NEObject, objectType: String): Option[String] =
+    Some(pretty(render(
+      decompose(obj.stringInfo) merge
+      decompose(obj.numInfo) merge
+      decompose(obj.relations) merge
+      decompose(obj.data) merge
+      ("obj_type" -> objectType)
+    )))
+      
+  // def serializeUpdate(obj: NEObject)
+
 }
 
 object Reader extends Loggable {
   
-  def apply(data: String) = makeObject(data)
-
   def makeListOpt(data: String): Option[List[String]] = {
 
     var p: Option[JValue] = None
