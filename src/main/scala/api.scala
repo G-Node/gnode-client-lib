@@ -12,7 +12,7 @@ trait CallGenerator {
   def authenticateUser(): Option[Request]
   def authenticateUser(username: String, password: String): Option[Request]
 
-  def createObject(): Option[Request]
+  def createObject(objectType: String): Option[Request]
   def updateObject(id: String): Option[Request]
 
   def getObject(id: String): Option[Request]
@@ -60,8 +60,8 @@ class DefaultAPI(config: Configuration) extends CallGenerator with APIHelper {
       short_basis / "account" / "authenticate" / "" << post_body
     }
 
-  def createObject(): Option[Request] =
-    pack(false, configuration) { (basis / "").PUT }
+  def createObject(objectType: String): Option[Request] =
+    pack(objectType.isEmpty, configuration) { (basis / objectType).PUT }
 
   def updateObject(id: String): Option[Request] =
     pack(id.isEmpty, configuration) {
