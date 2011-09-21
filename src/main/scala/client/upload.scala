@@ -39,39 +39,39 @@ class Uploader(private val config: Configuration, private val http: Http) extend
 
   }
     
-  // private def pushExisting(id: String, obj: NEObject): Boolean
+  private def pushExisting(id: String, obj: NEObject, objectType: String): Boolean = true
 
-  // def add(id: String, obj: NEObject) {
-  //   jobs enqueue Job(id, Some(obj))
-  //   logger info JOB_ADD(id)
-  // }
+  def add(id: String, obj: NEObject, objectType: Option[String]) {
+    jobs enqueue Job(id, Some(obj), objectType)
+    logger info JOB_ADD(id)
+  }
 
-  // def push() = {
+  def push() = {
 
-  //   import scala.collection.mutable.ListBuffer
-  //   val b = ListBuffer[String]()
+    import scala.collection.mutable.ListBuffer
+    val b = ListBuffer[String]()
 
-  //   while (!jobs.isEmpty) {
+    while (!jobs.isEmpty) {
 
-  //     val job = jobs.dequeue
+      val job = jobs.dequeue
 
-  //     job.id match {
-  // 	case "" =>
-  // 	  pushNew(job.obj.get) match {
-  // 	    case Some(id) => logger info JOB_COMPLETE(id); b += id
-  // 	    case None => logger error JOB_FAILURE("NEW_OBJECT")
-  // 	  }
-  // 	case id: String =>
-  // 	  pushExisting(id, job.obj.get) match {
-  // 	    case true => logger info JOB_COMPLETE(id)
-  // 	    case false => logger error JOB_FAILURE(id)
-  // 	  }
-  //     }
+      job.id match {
+  	case "" =>
+  	  pushNew(job.obj.get, job.objectType.get) match {
+  	    case Some(id) => logger info JOB_COMPLETE(id); b += id
+  	    case None => logger error JOB_FAILURE("NEW_OBJECT")
+  	  }
+  	case id: String =>
+  	  pushExisting(id, job.obj.get, job.objectType.get) match {
+  	    case true => logger info JOB_COMPLETE(id)
+  	    case false => logger error JOB_FAILURE(id)
+  	  }
+      }
 
-  //   }
+    }
 
-  //   Some(b.toList)
+    Some(b.toList)
 
-  // }
+  }
 
 }
