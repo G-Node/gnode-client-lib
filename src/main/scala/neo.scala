@@ -1,7 +1,7 @@
 package org.gnode.lib.neo
 
 case class NEOData(units: String,
-		   values: List[Double]) {
+		   data: List[Double]) {
 
   def this(units: String, data: Double) = this(units, List(data))
 
