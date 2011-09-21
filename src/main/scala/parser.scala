@@ -21,7 +21,7 @@ object Writer extends Loggable {
   import net.liftweb.json.Extraction._
   import net.liftweb.json.Printer._
 
-  implicit val formats = DefaultFormats + FieldSerializer[NEOData]()
+  implicit val formats = DefaultFormats + FieldSerializer[NEODataSingle]() + FieldSerializer[NEODataMulti]()
 
   def serializeNew(obj: NEObject, objectType: String): Option[String] =
     Some(pretty(render(
@@ -120,11 +120,11 @@ object Reader extends Loggable {
     // Extract data
     for {
       JField(key, JObject(List(JField("units", JString(units)), JField("data", JDouble(data))))) <- parsedData
-    } dataMap += key -> new NEOData(units, data)
+    } dataMap += key -> new NEODataSingle(units, data)
 
     for {
       JField(key, JObject(List(JField("units", JString(units)), JField("data", JInt(data))))) <- parsedData
-    } dataMap += key -> new NEOData(units, data.toDouble)
+    } dataMap += key -> new NEODataSingle(units, data.toDouble)
 
     for {
       JField(key, JObject(List(JField("units", JString(units)), JField("data", JArray(data))))) <- parsedData
@@ -132,7 +132,7 @@ object Reader extends Loggable {
       
       val buffer = ListBuffer[Double]()
       for (JDouble(d) <- data) buffer += d
-      dataMap += key -> new NEOData(units, buffer.toList)
+      dataMap += key -> new NEODataMulti(units, buffer.toList)
     
     }
     
