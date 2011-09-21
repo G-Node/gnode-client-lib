@@ -23,13 +23,12 @@ object Writer extends Loggable {
 
   implicit val formats = DefaultFormats + FieldSerializer[NEODataSingle]() + FieldSerializer[NEODataMulti]()
 
-  def serializeNew(obj: NEObject, objectType: String): Option[String] =
+  def serialize(obj: NEObject): Option[String] =
     Some(pretty(render(
       decompose(obj.stringInfo) merge
       decompose(obj.numInfo) merge
       decompose(obj.relations) merge
-      decompose(obj.data) merge
-      ("obj_type" -> objectType)
+      decompose(obj.data)
     )))
       
   // def serializeUpdate(obj: NEObject)
