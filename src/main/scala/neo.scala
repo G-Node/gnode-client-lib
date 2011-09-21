@@ -1,9 +1,23 @@
 package org.gnode.lib.neo
 
-case class NEOData(units: String,
-		   data: List[Double]) {
+sealed abstract class NEOData {
+  def getUnits: String
+  def getData: List[Double]
+}
 
-  def this(units: String, data: Double) = this(units, List(data))
+case class NEODataSingle(units: String,
+			 data: Double) extends NEOData {
+ 
+  def getUnits: String = this.units
+  def getData: List[Double] = List(this.data)
+
+}
+
+case class NEODataMulti(units: String,
+		   data: List[Double]) extends NEOData {
+
+  def getUnits: String = this.units
+  def getData: List[Double] = this.data
 
 }
 
