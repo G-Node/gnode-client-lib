@@ -1,7 +1,12 @@
 {
     "spiketrain": {
         "attributes": [], 
-        "required": [], 
+        "required": [
+            "t_start", 
+            "t_stop", 
+            "times", 
+            "waveforms"
+        ], 
         "parents": [
             "segment", 
             "unit"
@@ -19,7 +24,10 @@
             "name"
         ], 
         "required": [
-            "name"
+            "name", 
+            "t_start", 
+            "signal", 
+            "times"
         ], 
         "parents": [
             "segment", 
@@ -75,7 +83,10 @@
             "name"
         ], 
         "required": [
-            "name"
+            "name", 
+            "sampling_rate", 
+            "t_start", 
+            "signal"
         ], 
         "parents": [
             "segment", 
@@ -94,7 +105,9 @@
             "label"
         ], 
         "required": [
-            "label"
+            "label", 
+            "time", 
+            "duration"
         ], 
         "parents": [
             "segment", 
@@ -142,7 +155,12 @@
     }, 
     "spike": {
         "attributes": [], 
-        "required": [], 
+        "required": [
+            "left_sweep", 
+            "time", 
+            "sampling_rate", 
+            "waveforms"
+        ], 
         "parents": [
             "segment", 
             "unit"
@@ -196,7 +214,8 @@
             "label"
         ], 
         "required": [
-            "label"
+            "label", 
+            "time"
         ], 
         "parents": [
             "segment", 
