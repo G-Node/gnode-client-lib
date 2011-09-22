@@ -36,7 +36,13 @@ class Uploader(private val config: Configuration, private val http: Http) extend
 	case _ => None
       }}
 
-    http(handler) // TODO: Error handling
+    try {
+      http(handler)
+    } catch {
+      case StatusCode(400, _) =>
+	logger error UPLOAD_NEW_BAD_REQUEST(objectType)
+	None
+    }
 
   }
     
@@ -55,8 +61,14 @@ class Uploader(private val config: Configuration, private val http: Http) extend
 	case JString(id) => Some(id)
 	case _ => None
       }}
-
-    http(handler)
+    
+    try {
+      http(handler)
+    } catch {
+      case StatusCode(400, _) =>
+	logger error UPLOAD_UPDATE_BAD_REQUEST(id)
+	None
+    }
 
   }
 
