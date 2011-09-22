@@ -50,7 +50,7 @@ class TransferManager(private val config: Configuration) extends HttpInteractor 
       d get
     }
 
-  def retrieveSingle(id: String) =
+  def retrieve(id: String) =
     authenticated {
       d.add(id)
       d get match {
@@ -60,7 +60,7 @@ class TransferManager(private val config: Configuration) extends HttpInteractor 
       }
     }
 
-  def retrieveMany(ids: List[String]) =
+  def retrieve(ids: List[String]) =
     authenticated {
       ids foreach d.add
       d get
