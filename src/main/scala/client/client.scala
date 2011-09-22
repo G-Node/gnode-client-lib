@@ -43,6 +43,13 @@ class TransferManager(private val config: Configuration) extends HttpInteractor 
   // Put "authenticated" in scope
   import a._
 
+  // Retrieval methods
+
+  def retrieve =
+    authenticated {
+      d get
+    }
+
   def retrieveSingle(id: String) =
     authenticated {
       d.add(id)
@@ -64,47 +71,94 @@ class TransferManager(private val config: Configuration) extends HttpInteractor 
       d.list(objectType, limit)
     }
 
-  def createSingle(o: NEObject, objectType: String) =
+  // Generic push command
+
+  def push =
     authenticated {
-      u add ("", o, Some(objectType))
       u push
     }
 
-  def createMany(o: List[NEObject], objectType: String) =
+  // Create
+
+  def addCreate(obj: NEObject, objectType: String) =
+    u add ("", obj, Some(objectType))
+
+  def addCreate(objects: List[NEObject], objectType: String) =
+    objects foreach { u add ("", _, Some(objectType)) }
+
+  def addCreate(objects: List[(NEObject, String)]) =
+    objects foreach { pair => u add ("", pair._1, Some(pair._2)) }
+
+  def create(obj: NEObject, objectType: String) =
     authenticated {
-      o foreach { u add ("", _, Some(objectType)) }
+      u add ("", obj, Some(objectType))
       u push
     }
 
-  def createMany(o: List[(NEObject, String)]) =
+  def create(objects: List[NEObject], objectType: String) =
     authenticated {
-      o foreach { pair => u add ("", pair._1, Some(pair._2)) }
+      objects foreach { u add ("", _, Some(objectType)) }
       u push
     }
 
-  def updateSingle(id: String, obj: NEObject) =
+  def create(objects: List[(NEObject, String)]) =
+    authenticated {
+      objects foreach { pair => u add ("", pair._1, Some(pair._2)) }
+      u push
+    }
+
+  // Update
+
+  def addUpdate(id: String, obj: NEObject) =
+    u add (id, obj)
+
+  def addUpdate(obj: NEObject) =
+    u add (guessIdentifier(obj), obj)
+
+  def addUpdate(objects: Map[String, NEObject]) =
+    for ((id, obj) <- objects) u add (id, obj)
+
+  def addUpdate(objects: List[NEObject]) =
+    objects foreach { obj => u add (guessIdentifier(obj), obj) }
+
+  def update(id: String, obj: NEObject) =
     authenticated {
       u add (id, obj)
       u push
     }
 
-  def updateSingle(obj: NEObject) =
+  def update(obj: NEObject) =
     authenticated {
       u add (guessIdentifier(obj), obj)
       u push
     }
 
-  def updateMany(objects: Map[String, NEObject]) =
+  def update(objects: Map[String, NEObject]) =
     authenticated {
       for ((id, obj) <- objects) u add (id, obj)
       u push
     }
 
-  def updateMany(objects: List[NEObject]) =
+  def update(objects: List[NEObject]) =
     authenticated {
       objects foreach { obj => u add (guessIdentifier(obj), obj) }
       u push
     }
+
+  /* Connect
+   TODO */
+
+  // Queue operations
+
+  def clearUp {
+    u clear
+  }
+
+  def clearDown {
+    d clear
+  }
+
+  // Util
 
   private def guessIdentifier(obj: NEObject) =
     obj.stringInfo.isDefinedAt("neo_id") match {
