@@ -36,6 +36,11 @@ object LogMessages {
 
   def PARSE_ERROR(id: String) = "Could not parse %s".format(id)
 
+  // org.gnode.lib.client.Uploader
+  def UPLOAD_VALIDATION_ERROR = "Object didn't pass validation. Not added to upload queue"
+  def UPLOAD_NEW_BAD_REQUEST(objectType: String) = "New object with type %s was rejected by remote".format(objectType)
+  def UPLOAD_UPDATE_BAD_REQUEST(id: String) = "Update for %s was rejected by remote".format(id)
+
   // org.gnode.lib.parse.{Reader, Writer}
   def READ_ERROR_PARSE = "Parse exception occurred"
   def READ_ERROR_UNKNOWN = "Unknown error occurred while parsing"
