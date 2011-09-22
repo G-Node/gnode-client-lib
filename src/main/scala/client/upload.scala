@@ -18,6 +18,7 @@ class Uploader(private val config: Configuration, private val http: Http) extend
 
   import org.gnode.lib.parse.ExtractError
   lazy val caller = CallGenerator(config)
+  lazy val validator = new Validator(config)
 
   private def pushNew(no: NEObject, objectType: String): Option[String] = {
 
@@ -60,8 +61,14 @@ class Uploader(private val config: Configuration, private val http: Http) extend
   }
 
   def add(id: String, obj: NEObject, objectType: Option[String] = None) {
-    jobs enqueue Job(id, Some(obj), objectType)
-    logger info JOB_ADD(id)
+    validator.validate(obj) match {
+      case true =>
+	jobs enqueue Job(id, Some(obj), objectType)
+	logger info JOB_ADD(id)
+      case false =>
+	logger error UPLOAD_VALIDATION_ERROR
+	logger error JOB_FAILURE("NEW_OBJECT")
+    }
   }
 
   def push() = {
