@@ -30,7 +30,7 @@ object LogMessages {
   def CACHE_TRY(id: String, tag: String) = "Disconnected. Trying cache for %s@%s".format(id, tag)
   def CACHE_MISS(id: String, tag: String) = "Cache miss for %s@%s".format(id, tag)
 
-  def JOB_ADD(id: String) = "Enqueued new download job: %s".format(id)
+  def JOB_ADD(id: String) = "Enqueued new job: %s".format(id)
   def JOB_COMPLETE(id: String) = "Successfully completed job: %s".format(id)
   def JOB_FAILURE(id: String) = "Failed to complete job: %s".format(id)
 
