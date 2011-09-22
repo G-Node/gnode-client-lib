@@ -3,21 +3,24 @@ package org.gnode.lib.neo
 sealed abstract class NEOData {
   def getUnits: String
   def getData: List[Double]
+  def toString: String
 }
 
 case class NEODataSingle(units: String,
 			 data: Double) extends NEOData {
  
-  def getUnits: String = this.units
-  def getData: List[Double] = List(this.data)
+  def getUnits = this.units
+  def getData = List(this.data)
+  override def toString = "%s %s".format(this.data, this.units)
 
 }
 
 case class NEODataMulti(units: String,
-		   data: List[Double]) extends NEOData {
+			data: List[Double]) extends NEOData {
 
-  def getUnits: String = this.units
-  def getData: List[Double] = this.data
+  def getUnits = this.units
+  def getData = this.data
+  override def toString = "%s (...) %s".format(this.data.head, this.units)
 
 }
 
@@ -28,6 +31,13 @@ class NEObject(val stringInfo: Map[String, String] = Map[String, String](),
 
   def isDefinedAt(key: String) =
     (stringInfo.isDefinedAt(key) || numInfo.isDefinedAt(key) || data.isDefinedAt(key) || relations.isDefinedAt(key))
+
+  def pretty = (
+    (for ((k, v) <- stringInfo) yield "%s: %s".format(k, v)).toList :::
+    (for ((k, v) <- numInfo) yield "%s: %s".format(k, v.toString)).toList :::
+    (for ((k, v) <- data) yield "%s: %s".format(k, v.toString)).toList :::
+    (for ((k, v) <- relations) yield "%s: %s".format(k, v.mkString(", "))).toList
+    ).mkString("\n")
 
 }
 
