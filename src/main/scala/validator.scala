@@ -92,4 +92,8 @@ class Validator(private val config: Configuration) extends Loggable {
 
   }
 
+  // Object filter
+  def filter(obj: NEObject, objectType: String): Option[NEObject] =
+    None
+
 }
