@@ -27,7 +27,7 @@ object Writer extends Loggable {
     Some(pretty(render(
       decompose(obj.stringInfo) merge
       decompose(obj.numInfo) merge
-      decompose(obj.relations) merge
+      decompose(obj.relations.filterNot { case (key, list) => list.isEmpty }) merge
       decompose(obj.data)
     )))
       
@@ -87,18 +87,39 @@ object Reader extends Loggable {
     val strMap = MuMap[String, String]()
     val numMap = MuMap[String, Double]()
     val dataMap = MuMap[String, NEOData]()
+    val relMap = MuMap[String, List[String]]()
 
     def isData(l: List[JField]) =
       l exists { f: JField => f.name == "units" }
 
     def notData(l: List[JField]) =
       !isData(l)
+
+    def isRelation(label: String) =
+      label == "segment" ||
+      label == "block" ||
+      label == "event" ||
+      label == "eventarray" ||
+      label == "epoch" ||
+      label == "epocharray" ||
+      label == "unit" ||
+      label == "spiketrain" ||
+      label == "analogsignal" ||
+      label == "analogsignalarray" ||
+      label == "irsaanalogsignal" ||
+      label == "spike" ||
+      label == "recordingchannelgroup" ||
+      label == "recordingchannel"
+
+    def notRelation(label: String) =
+      !isRelation(label)
      
     // Extract string-based info
     for {
       JObject(list) <- parsedData
       if notData(list)
       JField(key, JString(value)) <- list
+      if notRelation(key)
     } {
       strMap += key -> value
     }
@@ -115,6 +136,29 @@ object Reader extends Loggable {
       if notData(list)
       JField(key, JDouble(value)) <- list
     } numMap += key -> value
+
+    // Extract data about relationships
+
+    // Several
+    for {
+      JObject(list) <- parsedData
+      if notData(list)
+      JField(key, JArray(rels)) <- list
+    } {
+
+      val buffer = ListBuffer[String]()
+      for (JString(rel) <- rels) buffer += rel
+      relMap += key -> buffer.toList
+
+    }
+
+    // One
+    for {
+      JObject(list) <- parsedData
+      if notData(list)
+      JField(key, JString(value)) <- list
+      if isRelation(key)
+    } relMap += key -> List(value)
 
     // Extract data
     for {
@@ -136,7 +180,7 @@ object Reader extends Loggable {
     }
     
     // Build return object
-    Some(new NEObject(Map.empty ++ strMap, Map.empty ++ numMap, Map.empty ++ dataMap))
+    Some(new NEObject(Map.empty ++ strMap, Map.empty ++ numMap, Map.empty ++ dataMap, Map.empty ++ relMap))
     
   }
     
