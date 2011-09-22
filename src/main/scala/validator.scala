@@ -86,10 +86,9 @@ class Validator(private val config: Configuration) extends Loggable {
   def validate(obj: NEObject, objectType: String, upload: Boolean): Boolean = {
 
     if (!contract.isDefinedAt(objectType)) throw new IllegalArgumentException
-    val reqs = (if (upload) List("obj_type") else Nil) ::: contract(objectType).required
 
     // Negative check -- any required fields missing?
-    reqs forall { obj.isDefinedAt(_) }
+     contract(objectType).required forall { obj.isDefinedAt(_) }
 
   }
 
