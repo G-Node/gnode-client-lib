@@ -19,7 +19,7 @@ class Uploader(private val config: Configuration, private val http: Http) extend
   import org.gnode.lib.parse.ExtractError
   lazy val caller = CallGenerator(config)
 
-  private def pushNew(o: NEObject, objectType: String): Option[String] = {
+  private def pushNew(no: NEObject, objectType: String): Option[String] = {
 
     import dispatch.liftjson.Js._
     import net.liftweb.json.JsonAST._
@@ -27,21 +27,39 @@ class Uploader(private val config: Configuration, private val http: Http) extend
     val request = (caller.createObject(objectType) match {
       case Some(r) => r
       case None => throw new IllegalArgumentException
-    }) <<< Writer.serialize(o).getOrElse("")
+    }) <<< Writer.serialize(no).getOrElse("")
 
     val handler = request ># { json =>
       (json \ "neo_id") match {
-	case JString(id) => id
-	case _ => "NO_ID"
+	case JString(id) => Some(id)
+	case _ => None
       }}
 
-    Some(http(handler))
+    http(handler) // TODO: Error handling
 
   }
     
-  private def pushExisting(id: String, obj: NEObject, objectType: String): Boolean = true
+  private def pushExisting(id: String, no: NEObject): Option[String] = {
 
-  def add(id: String, obj: NEObject, objectType: Option[String]) {
+    import dispatch.liftjson.Js._
+    import net.liftweb.json.JsonAST._
+
+    val request = (caller.updateObject(id) match {
+      case Some(r) => r
+      case None => throw new IllegalArgumentException
+    }) <<< Writer.serialize(no).getOrElse("")
+
+    val handler = request ># { json =>
+      (json \ "neo_id") match {
+	case JString(id) => Some(id)
+	case _ => None
+      }}
+
+    http(handler)
+
+  }
+
+  def add(id: String, obj: NEObject, objectType: Option[String] = None) {
     jobs enqueue Job(id, Some(obj), objectType)
     logger info JOB_ADD(id)
   }
@@ -62,9 +80,9 @@ class Uploader(private val config: Configuration, private val http: Http) extend
   	    case None => logger error JOB_FAILURE("NEW_OBJECT")
   	  }
   	case id: String =>
-  	  pushExisting(id, job.obj.get, job.objectType.get) match {
-  	    case true => logger info JOB_COMPLETE(id)
-  	    case false => logger error JOB_FAILURE(id)
+  	  pushExisting(id, job.obj.get) match {
+  	    case Some(rid) => logger info JOB_COMPLETE(id); b += rid
+  	    case None => logger error JOB_FAILURE(id)
   	  }
       }
 
