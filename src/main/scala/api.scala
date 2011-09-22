@@ -65,7 +65,7 @@ class DefaultAPI(config: Configuration) extends CallGenerator with APIHelper {
 
   def updateObject(id: String): Option[Request] =
     pack(id.isEmpty, configuration) {
-      (basis / id / "").POST
+      (basis / split(id)._1 / split(id)._2 / "").POST
     }
 
   def getObject(id: String): Option[Request] =
