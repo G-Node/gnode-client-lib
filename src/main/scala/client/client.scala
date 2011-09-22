@@ -81,6 +81,36 @@ class TransferManager(private val config: Configuration) extends HttpInteractor 
       o foreach { pair => u add ("", pair._1, Some(pair._2)) }
       u push
     }
+
+  def updateSingle(id: String, obj: NEObject) =
+    authenticated {
+      u add (id, obj)
+      u push
+    }
+
+  def updateSingle(obj: NEObject) =
+    authenticated {
+      u add (guessIdentifier(obj), obj)
+      u push
+    }
+
+  def updateMany(objects: Map[String, NEObject]) =
+    authenticated {
+      for ((id, obj) <- objects) u add (id, obj)
+      u push
+    }
+
+  def updateMany(objects: List[NEObject]) =
+    authenticated {
+      objects foreach { obj => u add (guessIdentifier(obj), obj) }
+      u push
+    }
+
+  private def guessIdentifier(obj: NEObject) =
+    obj.stringInfo.isDefinedAt("neo_id") match {
+      case true => obj.stringInfo("neo_id")
+      case false => throw new IllegalArgumentException
+    }
   
 }
 
