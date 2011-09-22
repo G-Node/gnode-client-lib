@@ -65,17 +65,17 @@ class Validator(private val config: Configuration) extends Loggable {
 
   // VALIDATION METHODS
 
-  def validate(obj: NEObject, upload: Boolean): Boolean =
+  def validate(obj: NEObject): Boolean =
     // Attempt to guess object type
     if (obj.isDefinedAt("neo_id")) {
 
       val t = (new APIHelper {}).split(obj.stringInfo("neo_id"))._1
-      validate(obj, t, upload)
+      validate(obj, t)
 
     } else if (obj.isDefinedAt("obj_type")) {
 
       val t = obj.stringInfo("obj_type")
-      validate(obj, t, upload)
+      validate(obj, t)
 
     } else {
 
@@ -83,7 +83,7 @@ class Validator(private val config: Configuration) extends Loggable {
 
     }
 
-  def validate(obj: NEObject, objectType: String, upload: Boolean): Boolean = {
+  def validate(obj: NEObject, objectType: String): Boolean = {
 
     if (!contract.isDefinedAt(objectType)) throw new IllegalArgumentException
 
