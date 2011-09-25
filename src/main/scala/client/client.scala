@@ -45,9 +45,12 @@ class TransferManager(private val config: Configuration) extends HttpInteractor 
 
   // Retrieval methods
 
+  def addDown(id: String) =
+    d add id
+
   def retrieve =
     authenticated {
-      d get
+      (d get).get.toArray
     }
 
   def retrieve(id: String) =
@@ -63,12 +66,12 @@ class TransferManager(private val config: Configuration) extends HttpInteractor 
   def retrieve(ids: List[String]) =
     authenticated {
       ids foreach d.add
-      d get
+      (d get).get.toArray
     }
 
-  def retrieveList(objectType: String, limit: Int = 0) =
+  def retrieveList(objectType: String, limit: Int = 0): Array[String] =
     authenticated {
-      d.list(objectType, limit)
+      d.list(objectType, limit).get.toArray
     }
 
   // Generic push command
@@ -124,6 +127,15 @@ class TransferManager(private val config: Configuration) extends HttpInteractor 
   def update(id: String, obj: NEObject) =
     authenticated {
       u add (id, obj)
+      u push
+    }
+
+  def updateSpecial(id: String) =
+    authenticated {
+      val b = new NEOBuilder
+      b.add("name", "Changed...")
+      b.add("neo_id", "analogsignal_947")
+      u add (id, b.build)
       u push
     }
 

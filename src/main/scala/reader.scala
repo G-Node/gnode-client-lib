@@ -87,7 +87,7 @@ object Reader extends Loggable {
     val strMap = MuMap[String, String]()
     val numMap = MuMap[String, Double]()
     val dataMap = MuMap[String, NEOData]()
-    val relMap = MuMap[String, List[String]]()
+    val relMap = MuMap[String, Array[String]]()
 
     def isData(l: List[JField]) =
       l exists { f: JField => f.name == "units" }
@@ -148,7 +148,7 @@ object Reader extends Loggable {
 
       val buffer = ListBuffer[String]()
       for (JString(rel) <- rels) buffer += rel
-      relMap += key -> buffer.toList
+      relMap += key -> buffer.toArray
 
     }
 
@@ -158,7 +158,7 @@ object Reader extends Loggable {
       if notData(list)
       JField(key, JString(value)) <- list
       if isRelation(key)
-    } relMap += key -> List(value)
+    } relMap += key -> Array(value)
 
     // Extract data
     for {
@@ -175,7 +175,7 @@ object Reader extends Loggable {
       
       val buffer = ListBuffer[Double]()
       for (JDouble(d) <- data) buffer += d
-      dataMap += key -> new NEODataMulti(units, buffer.toList)
+      dataMap += key -> new NEODataMulti(units, buffer.toArray)
     
     }
     

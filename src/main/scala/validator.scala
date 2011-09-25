@@ -84,11 +84,12 @@ class Validator(private val config: Configuration) extends Loggable {
     }
 
   def validate(obj: NEObject, objectType: String): Boolean = {
+    true
 
-    if (!contract.isDefinedAt(objectType)) throw new IllegalArgumentException
+    // if (!contract.isDefinedAt(objectType)) throw new IllegalArgumentException
 
-    // Negative check -- any required fields missing?
-     contract(objectType).required forall { obj.isDefinedAt(_) }
+    // // Negative check -- any required fields missing?
+    //  contract(objectType).required forall { obj.isDefinedAt(_) }
 
   }
 
