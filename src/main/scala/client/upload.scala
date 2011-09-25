@@ -14,12 +14,10 @@ import dispatch._
 // Make log messages available globally
 import LogMessages._
 
-class Uploader(private val config: Configuration, private val http: Http) extends BatchTransfer {
+class Uploader(private val config: Configuration, private val http: Http, private val validator: Validator) extends BatchTransfer {
 
   import org.gnode.lib.parse.ExtractError
-
   lazy val caller = CallGenerator(config)
-  lazy val validator = new Validator(config)
 
   private def pushNew(no: NEObject, objectType: String): Option[String] = {
 
@@ -74,7 +72,7 @@ class Uploader(private val config: Configuration, private val http: Http) extend
   }
 
   def add(id: String, obj: NEObject, objectType: Option[String] = None) {
-    validator.validate(obj) match {
+    validator.validate(obj, objectType.getOrElse("")) match {
       case true =>
 	jobs enqueue Job(id, Some(obj), objectType)
 	logger info JOB_ADD(id)

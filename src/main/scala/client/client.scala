@@ -7,6 +7,7 @@ import org.gnode.lib.conf._
 import org.gnode.lib.neo._
 import org.gnode.lib.api._
 import org.gnode.lib.parse._
+import org.gnode.lib.validate._
 
 // External packages
 import dispatch._
@@ -35,9 +36,11 @@ trait HttpInteractor extends Loggable {
 
 class TransferManager(private val config: Configuration) extends HttpInteractor {
 
+  val validator = new Validator(config)
+
   // Delegator
   private val d = new Downloader(config, http)
-  private val u = new Uploader(config, http)
+  private val u = new Uploader(config, http, validator)
   private val a = new Authenticator(config, http)
 
   // Put "authenticated" in scope
@@ -63,11 +66,13 @@ class TransferManager(private val config: Configuration) extends HttpInteractor 
       }
     }
 
-  def retrieve(ids: List[String]) =
+  def retrieve(ids: Array[String]) =
     authenticated {
       ids foreach d.add
       (d get).get.toArray
     }
+
+  // List
 
   def retrieveList(objectType: String, limit: Int = 0): Array[String] =
     authenticated {
@@ -86,10 +91,10 @@ class TransferManager(private val config: Configuration) extends HttpInteractor 
   def addCreate(obj: NEObject, objectType: String) =
     u add ("", obj, Some(objectType))
 
-  def addCreate(objects: List[NEObject], objectType: String) =
+  def addCreate(objects: Array[NEObject], objectType: String) =
     objects foreach { u add ("", _, Some(objectType)) }
 
-  def addCreate(objects: List[(NEObject, String)]) =
+  def addCreate(objects: Array[(NEObject, String)]) =
     objects foreach { pair => u add ("", pair._1, Some(pair._2)) }
 
   def create(obj: NEObject, objectType: String) =
@@ -98,13 +103,13 @@ class TransferManager(private val config: Configuration) extends HttpInteractor 
       u push
     }
 
-  def create(objects: List[NEObject], objectType: String) =
+  def create(objects: Array[NEObject], objectType: String) =
     authenticated {
       objects foreach { u add ("", _, Some(objectType)) }
       u push
     }
 
-  def create(objects: List[(NEObject, String)]) =
+  def create(objects: Array[(NEObject, String)]) =
     authenticated {
       objects foreach { pair => u add ("", pair._1, Some(pair._2)) }
       u push
@@ -121,7 +126,7 @@ class TransferManager(private val config: Configuration) extends HttpInteractor 
   def addUpdate(objects: Map[String, NEObject]) =
     for ((id, obj) <- objects) u add (id, obj)
 
-  def addUpdate(objects: List[NEObject]) =
+  def addUpdate(objects: Array[NEObject]) =
     objects foreach { obj => u add (guessIdentifier(obj), obj) }
 
   def update(id: String, obj: NEObject) =
@@ -142,7 +147,7 @@ class TransferManager(private val config: Configuration) extends HttpInteractor 
       u push
     }
 
-  def update(objects: List[NEObject]) =
+  def update(objects: Array[NEObject]) =
     authenticated {
       objects foreach { obj => u add (guessIdentifier(obj), obj) }
       u push

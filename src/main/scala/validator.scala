@@ -23,6 +23,13 @@ class Validator(private val config: Configuration) extends Loggable {
   private val contract: Map[String, Contract] =
     readContractFromFile(config.apiDefinition).getOrElse(Map[String, Contract]())
 
+  // Contract access
+  def getRequired(t: String) = this.contract(t).required.toArray
+  def getData(t: String) = this.contract(t).data_fields.toArray
+  def getAttributes(t: String) = this.contract(t).data_fields.toArray
+  def getChildren(t: String) = this.contract(t).children.toArray
+  def getParents(t: String) = this.contract(t).parents.toArray
+
   // CONTRACT EXTRACTION METHODS
 
   private def readContractFromFile(path: String): Option[Map[String, Contract]] =
@@ -84,12 +91,11 @@ class Validator(private val config: Configuration) extends Loggable {
     }
 
   def validate(obj: NEObject, objectType: String): Boolean = {
-    true
 
-    // if (!contract.isDefinedAt(objectType)) throw new IllegalArgumentException
-
-    // // Negative check -- any required fields missing?
-    //  contract(objectType).required forall { obj.isDefinedAt(_) }
+    if (!contract.isDefinedAt(objectType)) throw new IllegalArgumentException
+    
+    // Negative check -- any required fields missing?
+    contract(objectType).required forall { obj.isDefinedAt(_) }
 
   }
 
