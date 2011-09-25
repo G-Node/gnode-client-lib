@@ -31,8 +31,6 @@ object Writer extends Loggable {
       decompose(obj.data)
     )))
       
-  // def serializeUpdate(obj: NEObject)
-
 }
 
 object Reader extends Loggable {
