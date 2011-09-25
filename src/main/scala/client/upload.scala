@@ -75,7 +75,7 @@ class Uploader(private val config: Configuration, private val http: Http, privat
     validator.validate(obj, objectType.getOrElse("")) match {
       case true =>
 	jobs enqueue Job(id, Some(obj), objectType)
-	logger info JOB_ADD(id)
+	logger info JOB_ADD(if (id.isEmpty) "NEW_OBJECT" else id)
       case false =>
 	logger error UPLOAD_VALIDATION_ERROR
 	logger error JOB_FAILURE("NEW_OBJECT")

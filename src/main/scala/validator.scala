@@ -25,10 +25,13 @@ class Validator(private val config: Configuration) extends Loggable {
 
   // Contract access
   def getRequired(t: String) = this.contract(t).required.toArray
+
   def getData(t: String) = this.contract(t).data_fields.toArray
-  def getAttributes(t: String) = this.contract(t).data_fields.toArray
+  def getAttributes(t: String) = this.contract(t).attributes.toArray
   def getChildren(t: String) = this.contract(t).children.toArray
   def getParents(t: String) = this.contract(t).parents.toArray
+
+  def getAll(t: String) = if (contract.isDefinedAt(t)) getData(t) ++ getAttributes(t) ++ getChildren(t) ++ getParents(t) else Array[String]()
 
   // CONTRACT EXTRACTION METHODS
 
@@ -92,7 +95,8 @@ class Validator(private val config: Configuration) extends Loggable {
 
   def validate(obj: NEObject, objectType: String): Boolean = {
 
-    if (!contract.isDefinedAt(objectType)) throw new IllegalArgumentException
+    // CAREFUL: Unknown object types lead to trivially valid NEObjects
+    if (!contract.isDefinedAt(objectType)) return true
     
     // Negative check -- any required fields missing?
     contract(objectType).required forall { obj.isDefinedAt(_) }
