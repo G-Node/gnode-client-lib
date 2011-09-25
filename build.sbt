@@ -15,7 +15,7 @@ libraryDependencies ++= Seq(
   "net.databinder" %% "dispatch-http" % "0.8.5",
   "net.databinder" %% "dispatch-lift-json" % "0.8.5",
   "net.databinder" %% "dispatch-json" % "0.8.5",
-  "net.liftweb" %% "lift-json" % "2.4-M4",
+  //"net.liftweb" %% "lift-json" % "2.4-M4",
   "com.twitter" % "util-logging" % "1.11.4"
   //"com.mongodb.casbah" %% "casbah" % "2.1.5.0"
 )
