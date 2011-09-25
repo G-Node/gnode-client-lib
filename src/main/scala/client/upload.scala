@@ -17,6 +17,7 @@ import LogMessages._
 class Uploader(private val config: Configuration, private val http: Http) extends BatchTransfer {
 
   import org.gnode.lib.parse.ExtractError
+
   lazy val caller = CallGenerator(config)
   lazy val validator = new Validator(config)
 
@@ -85,8 +86,8 @@ class Uploader(private val config: Configuration, private val http: Http) extend
 
   def push() = {
 
-    import scala.collection.mutable.ListBuffer
-    val b = ListBuffer[String]()
+    import scala.collection.mutable.ArrayBuffer
+    val b = ArrayBuffer[String]()
 
     while (!jobs.isEmpty) {
 
@@ -107,7 +108,7 @@ class Uploader(private val config: Configuration, private val http: Http) extend
 
     }
 
-    Some(b.toList)
+    b.toArray
 
   }
 

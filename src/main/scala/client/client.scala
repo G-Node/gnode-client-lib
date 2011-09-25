@@ -130,15 +130,6 @@ class TransferManager(private val config: Configuration) extends HttpInteractor 
       u push
     }
 
-  def updateSpecial(id: String) =
-    authenticated {
-      val b = new NEOBuilder
-      b.add("name", "Changed...")
-      b.add("neo_id", "analogsignal_947")
-      u add (id, b.build)
-      u push
-    }
-
   def update(obj: NEObject) =
     authenticated {
       u add (guessIdentifier(obj), obj)
