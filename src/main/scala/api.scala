@@ -57,7 +57,7 @@ class DefaultAPI(config: Configuration) extends CallGenerator with APIHelper {
   def authenticateUser(username: String, password: String): Option[Request] =
     pack(false, configuration) {
       val post_body = "username=" + username + "&password=" + password
-      (short_basis / "account" / "authenticate" / "" << post_body).secure
+      (short_basis / "data" / "account" / "authenticate" / "" << post_body).secure
     }
 
   def createObject(objectType: String): Option[Request] =

@@ -18,7 +18,7 @@ import LogMessages._
 trait HttpInteractor extends Loggable {
   
   // Create custom Http object that uses library-wide Twttr logging
-  lazy val http = new Http with Loggable {
+  lazy val http = new Http with HttpsLeniency with Loggable {
     override def make_logger = new Logger {
 
       def info(msg: String, items: Any*) { /* logger.info(msg, items: _*) */ }
