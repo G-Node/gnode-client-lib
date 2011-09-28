@@ -10,7 +10,8 @@
     
     "host": "hal10.g-node.pri",
     "port": 80,
-    "path": "neo",
+    "prefix": "",
+    "prefixData": "neo",
 
     "apiDefinition": "requirements.json",
 

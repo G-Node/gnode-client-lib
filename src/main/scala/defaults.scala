@@ -8,6 +8,7 @@ object Default {
 						 "pass",
 						 "hal10.g-node.pri",
 						 80,
+						 "data",
 						 "neo",
 						 "requirements.json",
 						 "MEMORY",
