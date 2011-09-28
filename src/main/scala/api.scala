@@ -57,45 +57,45 @@ class DefaultAPI(config: Configuration) extends CallGenerator with APIHelper {
   def authenticateUser(username: String, password: String): Option[Request] =
     pack(false, configuration) {
       val post_body = "username=" + username + "&password=" + password
-      short_basis / "account" / "authenticate" / "" << post_body
+      (short_basis / "account" / "authenticate" / "" << post_body).secure
     }
 
   def createObject(objectType: String): Option[Request] =
-    pack(objectType.isEmpty, configuration) { (basis / objectType).PUT }
+    pack(objectType.isEmpty, configuration) { (basis / objectType).PUT.secure }
 
   def updateObject(id: String): Option[Request] =
     pack(id.isEmpty, configuration) {
-      (basis / split(id)._1 / split(id)._2 / "").POST
+      (basis / split(id)._1 / split(id)._2 / "").POST.secure
     }
 
   def getObject(id: String): Option[Request] =
     pack(id.isEmpty, configuration) {
-      basis / split(id)._1 / split(id)._2 / ""
+      (basis / split(id)._1 / split(id)._2 / "").secure
     }
 
   def getData(id: String, options: Map[String, String] = Map()): Option[Request] =
     pack(id.isEmpty, configuration) {
-      basis / "data" / id / "" <<? options
+      (basis / "data" / id / "" <<? options).secure
     }
 
   def getParents(id: String): Option[Request] =
     pack(id.isEmpty, configuration) {
-      basis / "parents" / id / ""
+      (basis / "parents" / id / "").secure
     }
 
   def getChildren(id: String): Option[Request] =
     pack(id.isEmpty, configuration) {
-      basis / "children" / id / ""
+      (basis / "children" / id / "").secure
     }
 
   def getList(objectType: String, limit: Int = 0): Option[Request] =
     pack(objectType.isEmpty, configuration) {
-      basis / objectType / "" <<? Map("range_start" -> limit.toString)
+      (basis / objectType / "" <<? Map("range_start" -> limit.toString)).secure
     }
 
   def assign(id: String, options: Map[String, String]): Option[Request] =
     pack(id.isEmpty, configuration) {
-      basis / "assign" / id / "" <<? options
+      (basis / "assign" / id / "" <<? options).secure
     }
   
 }
