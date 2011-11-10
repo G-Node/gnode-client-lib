@@ -5,15 +5,15 @@
     "required": ["username", "password", "host", "port", "path",
 		 "apiVersion", "caching", "db"],
     
-    "username": "bob",
-    "password": "pass",
+    "username": "test",
+    "password": "test",
     
-    "host": "hal10.g-node.pri",
+    "host": "portal.g-node.org",
     "port": 80,
-    "prefix": "",
+    "prefix": "data",
     "prefixData": "neo",
 
-    "apiDefinition": "requirements.json",
+    "apiDefinition": "",
 
     "caching" : "MEMORY",
     "db": ""
