@@ -1,6 +1,6 @@
 name := "gnode-client-lib"
 
-version := "0.5b"
+version := "0.51b"
 
 organization := "org.gnode"
 
