@@ -57,10 +57,8 @@ class Uploader(private val config: Configuration, private val http: Http, privat
     logger info request.path
 
     val handler = request ># { json =>
-      (json \ "permalink") match {
-	case JString(permalink) => Some(extractID(permalink))
-	case _ => None
-      }}
+      Some((for { JField("permalink", JString(value)) <- (json \ "selected") } yield extractID(value)).head)
+			    }
 
     try {
       http(handler)
@@ -86,10 +84,7 @@ class Uploader(private val config: Configuration, private val http: Http, privat
     logger info request.path
 
     val handler = request ># { json =>
-      (json \ "permalink") match {
-	case JString(permalink) => Some(extractID(permalink))
-	case _ => None
-      }}
+      Some((for { JField("permalink", JString(value)) <- (json \ "selected") } yield extractID(value)).head) }
     
     try {
       http(handler)
