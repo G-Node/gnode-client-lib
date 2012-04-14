@@ -39,6 +39,8 @@ import LogMessages._
 class Uploader(private val config: Configuration, private val http: Http, private val validator: Validator) extends BatchTransfer {
 
   import org.gnode.lib.parse.ExtractError
+  import org.gnode.lib.util.IDExtractor._
+
   lazy val caller = CallGenerator(config)
 
   private def pushNew(no: NEObject, objectType: String): Option[String] = {
@@ -49,11 +51,14 @@ class Uploader(private val config: Configuration, private val http: Http, privat
     val request = (caller.createObject(objectType) match {
       case Some(r) => r
       case None => throw new IllegalArgumentException
-    }) <<< Writer.serialize(no).getOrElse("")
+    }) << Writer.serialize(no).getOrElse("")
+
+    logger info request.method
+    logger info request.path
 
     val handler = request ># { json =>
-      (json \ "neo_id") match {
-	case JString(id) => Some(id)
+      (json \ "permalink") match {
+	case JString(permalink) => Some(extractID(permalink))
 	case _ => None
       }}
 
@@ -75,11 +80,14 @@ class Uploader(private val config: Configuration, private val http: Http, privat
     val request = (caller.updateObject(id) match {
       case Some(r) => r
       case None => throw new IllegalArgumentException
-    }) <<< Writer.serialize(no).getOrElse("")
+    }) << Writer.serialize(no).getOrElse("")
+
+    logger info request.method
+    logger info request.path
 
     val handler = request ># { json =>
-      (json \ "neo_id") match {
-	case JString(id) => Some(id)
+      (json \ "permalink") match {
+	case JString(permalink) => Some(extractID(permalink))
 	case _ => None
       }}
     

@@ -25,6 +25,15 @@ package org.gnode.lib.util
 /** Utility object. Provides file management support (e.g., auto-closing of
  * resources). */
 
+object IDExtractor {
+
+  def extractID(url: String): String = {
+    val s = url.split("/")
+    s.slice(s.length - 2, s.length).reduceLeft(_ + "_" + _)
+  }
+
+}
+
 object File {
 
   /** Helper function. Offers auto-close functionality for close()-providing

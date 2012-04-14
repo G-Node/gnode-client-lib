@@ -83,7 +83,7 @@ class DefaultAPI(config: Configuration) extends CallGenerator with APIHelper {
     }
 
   def createObject(objectType: String): Option[Request] =
-    pack(objectType.isEmpty, configuration) { (basis / objectType).PUT }
+    pack(objectType.isEmpty, configuration) { (basis / objectType / "").POST }
 
   def updateObject(id: String): Option[Request] =
     pack(id.isEmpty, configuration) {

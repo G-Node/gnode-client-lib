@@ -57,10 +57,7 @@ object Writer extends Loggable {
 
 object Reader extends Loggable {
 
-  private def extractID(url: String): String = {
-    val s = url.split("/")
-    s.slice(s.length - 2, s.length).reduceLeft(_ + "_" + _)
-  }
+  import org.gnode.lib.util.IDExtractor._
   
   def makeListOpt(data: String): Option[List[String]] = {
 
