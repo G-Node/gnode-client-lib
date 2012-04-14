@@ -70,7 +70,7 @@ class DefaultAPI(config: Configuration) extends CallGenerator with APIHelper {
 
   private val configuration = config
   
-  private val short_basis = :/(configuration.host) / configuration.prefix
+  private val short_basis = :/(configuration.host, configuration.port) / configuration.prefix
   private val basis = short_basis / configuration.prefixData
 
   def authenticateUser(): Option[Request] = authenticateUser(configuration.username,
@@ -79,45 +79,45 @@ class DefaultAPI(config: Configuration) extends CallGenerator with APIHelper {
   def authenticateUser(username: String, password: String): Option[Request] =
     pack(false, configuration) {
       val post_body = "username=" + username + "&password=" + password
-      (short_basis / "account" / "authenticate" / "" << post_body).secure
+      (short_basis / "account" / "authenticate" / "" << post_body)
     }
 
   def createObject(objectType: String): Option[Request] =
-    pack(objectType.isEmpty, configuration) { (basis / objectType).PUT.secure }
+    pack(objectType.isEmpty, configuration) { (basis / objectType).PUT }
 
   def updateObject(id: String): Option[Request] =
     pack(id.isEmpty, configuration) {
-      (basis / split(id)._1 / split(id)._2 / "").POST.secure
+      (basis / split(id)._1 / split(id)._2 / "").POST
     }
 
   def getObject(id: String): Option[Request] =
     pack(id.isEmpty, configuration) {
-      (basis / split(id)._1 / split(id)._2 / "").secure
+      (basis / split(id)._1 / split(id)._2 / "")
     }
 
   def getData(id: String, options: Map[String, String] = Map()): Option[Request] =
     pack(id.isEmpty, configuration) {
-      (basis / "data" / id / "" <<? options).secure
+      (basis / "data" / id / "" <<? options)
     }
 
   def getParents(id: String): Option[Request] =
     pack(id.isEmpty, configuration) {
-      (basis / "parents" / id / "").secure
+      (basis / "parents" / id / "")
     }
 
   def getChildren(id: String): Option[Request] =
     pack(id.isEmpty, configuration) {
-      (basis / "children" / id / "").secure
+      (basis / "children" / id / "")
     }
 
   def getList(objectType: String, limit: Int = 0): Option[Request] =
     pack(objectType.isEmpty, configuration) {
-      (basis / objectType / "" <<? Map("range_start" -> limit.toString)).secure
+      (basis / objectType / "" <<? Map("range_start" -> limit.toString))
     }
 
   def assign(id: String, options: Map[String, String]): Option[Request] =
     pack(id.isEmpty, configuration) {
-      (basis / "assign" / id / "" <<? options).secure
+      (basis / "assign" / id / "" <<? options)
     }
   
 }
