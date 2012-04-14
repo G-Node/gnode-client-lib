@@ -43,7 +43,7 @@ class Downloader(private val config: Configuration, private val http: Http) exte
   lazy val caller = CallGenerator(config)
   lazy val cache = Cache(config.caching)
 
-  def list(objectType: String, limit: Int = 1000, startIndex: Int = 0): Option[List[String]] = {
+  def list(objectType: String, limit: Int, startIndex: Int): Option[List[String]] = {
 
     logger info RETRIEVE_LIST_START(objectType)
     

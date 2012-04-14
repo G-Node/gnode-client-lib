@@ -110,7 +110,7 @@ class DefaultAPI(config: Configuration) extends CallGenerator with APIHelper {
       (basis / "children" / id / "")
     }
 
-  def getList(objectType: String, limit: Int = 1000, startIndex: Int = 0): Option[Request] =
+  def getList(objectType: String, limit: Int, startIndex: Int): Option[Request] =
     pack(objectType.isEmpty, configuration) {
       (basis / objectType / "" <<? Map("max_results" -> limit.toString,
 				       "offset" -> startIndex.toString))
