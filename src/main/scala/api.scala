@@ -43,7 +43,7 @@ trait CallGenerator {
   def getParents(id: String): Option[Request]
   def getChildren(id: String): Option[Request]
 
-  def getList(id: String, limit: Int = 0): Option[Request]
+  def getList(id: String, limit: Int = 0, startIndex: Int = 0): Option[Request]
   def assign(id: String, options: Map[String, String] = Map()): Option[Request]
 
 }
@@ -110,9 +110,10 @@ class DefaultAPI(config: Configuration) extends CallGenerator with APIHelper {
       (basis / "children" / id / "")
     }
 
-  def getList(objectType: String, limit: Int = 0): Option[Request] =
+  def getList(objectType: String, limit: Int = 0, startIndex: Int = 0): Option[Request] =
     pack(objectType.isEmpty, configuration) {
-      (basis / objectType / "" <<? Map("range_start" -> limit.toString))
+      (basis / objectType / "" <<? Map("max_results" -> limit.toString,
+				       "offset" -> startIndex.toString))
     }
 
   def assign(id: String, options: Map[String, String]): Option[Request] =
