@@ -74,8 +74,17 @@ object Reader extends Loggable {
 
     val parsedData = p get
 
-    return Some(for { JField("selected", JArray(list)) <- parsedData
-		       JString(value) <- list } yield value)
+    // return Some(for { JField("selected", JArray(list)) <- parsedData
+    // 		       JString(value) <- list } yield value)
+
+    def extractID(url: String): String = {
+      val s = url.split("/")
+      s.slice(s.length - 2, s.length).reduceLeft(_ + "_" + _)
+    }
+
+    return Some(for {
+      JField("permalink", JString(value)) <- parsedData
+    } yield extractID(value))
 
   }
 
