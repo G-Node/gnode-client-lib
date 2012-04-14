@@ -100,8 +100,6 @@ class Downloader(private val config: Configuration, private val http: Http) exte
     try {
 
       val (body, info) = http(handler)
-      logger info body
-      logger info info.head
 
       // 200
       val obj = Reader.makeObjectOpt(body)

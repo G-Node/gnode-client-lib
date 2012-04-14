@@ -209,6 +209,11 @@ object Reader extends Loggable {
       dataMap += key -> new NEODataMulti(units, buffer.toArray)
     
     }
+
+    // HACK: Add id from permalink
+    strMap += "id" -> (for {
+      JField("permalink", JString(value)) <- ((p get) \ "selected")
+    } yield extractID(value)).head
     
     // Build return object
     Some(new NEObject(Map.empty ++ strMap, Map.empty ++ numMap, Map.empty ++ dataMap, Map.empty ++ relMap))

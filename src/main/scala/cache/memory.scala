@@ -35,11 +35,11 @@ class MemoryCache extends Cache with Loggable {
   def add(obj: NEObject, etag: String = "") {
 
     val cObj = CacheObject(obj, etag)
-    val neo_id = obj.stringInfo.get("neo_id")
+    val id = obj.stringInfo.get("id")
 
-    neo_id match {
-      case Some(id) =>
-	cache += (id -> cObj)
+    id match {
+      case Some(curr_id) =>
+	cache += (curr_id -> cObj)
       case _ =>
 	throw new IllegalArgumentException
     }
