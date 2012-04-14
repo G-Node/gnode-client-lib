@@ -37,7 +37,7 @@ trait CallGenerator {
   def createObject(objectType: String): Option[Request]
   def updateObject(id: String): Option[Request]
 
-  def getObject(id: String): Option[Request]
+  def getObject(id: String, full: Boolean = true): Option[Request]
   def getData(id: String, options: Map[String, String] = Map()): Option[Request]
 
   def getParents(id: String): Option[Request]
@@ -90,9 +90,10 @@ class DefaultAPI(config: Configuration) extends CallGenerator with APIHelper {
       (basis / split(id)._1 / split(id)._2 / "").POST
     }
 
-  def getObject(id: String): Option[Request] =
+  def getObject(id: String, full: Boolean = true): Option[Request] =
     pack(id.isEmpty, configuration) {
-      (basis / split(id)._1 / split(id)._2 / "")
+      val args = if (full) Map("q" -> "full") else Map()
+      basis / split(id)._1 / split(id)._2 / "" <<? args
     }
 
   def getData(id: String, options: Map[String, String] = Map()): Option[Request] =

@@ -100,6 +100,8 @@ class Downloader(private val config: Configuration, private val http: Http) exte
     try {
 
       val (body, info) = http(handler)
+      logger info body
+      logger info info.head
 
       // 200
       val obj = Reader.makeObjectOpt(body)
@@ -136,6 +138,7 @@ class Downloader(private val config: Configuration, private val http: Http) exte
 	logger error HTTP_GENERAL(code, message)
 	return None
       case e =>
+	logger error e.toString
 	logger error RETRIEVE_OBJECT_ERROR_GENERIC(id)
 	return None
 

@@ -56,6 +56,11 @@ object Writer extends Loggable {
 }
 
 object Reader extends Loggable {
+
+  private def extractID(url: String): String = {
+    val s = url.split("/")
+    s.slice(s.length - 2, s.length).reduceLeft(_ + "_" + _)
+  }
   
   def makeListOpt(data: String): Option[List[String]] = {
 
@@ -76,11 +81,6 @@ object Reader extends Loggable {
 
     // return Some(for { JField("selected", JArray(list)) <- parsedData
     // 		       JString(value) <- list } yield value)
-
-    def extractID(url: String): String = {
-      val s = url.split("/")
-      s.slice(s.length - 2, s.length).reduceLeft(_ + "_" + _)
-    }
 
     return Some(for {
       JField("permalink", JString(value)) <- parsedData
@@ -111,7 +111,7 @@ object Reader extends Loggable {
 	return None
     }
 
-    val parsedData = p get
+    val parsedData = ((p get) \ "selected") \ "fields"
 
     val strMap = MuMap[String, String]()
     val numMap = MuMap[String, Double]()
@@ -124,7 +124,7 @@ object Reader extends Loggable {
     def notData(l: List[JField]) =
       !isData(l)
 
-    def isRelation(label: String) =
+    def isRelation(label: String) = {
       label == "segment" ||
       label == "block" ||
       label == "event" ||
@@ -138,7 +138,9 @@ object Reader extends Loggable {
       label == "irsaanalogsignal" ||
       label == "spike" ||
       label == "recordingchannelgroup" ||
-      label == "recordingchannel"
+      label == "recordingchannel" ||
+      label == "metadata"
+    }
 
     def notRelation(label: String) =
       !isRelation(label)
