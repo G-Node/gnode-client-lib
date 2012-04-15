@@ -100,7 +100,7 @@ class DefaultAPI(config: Configuration) extends CallGenerator with APIHelper {
 
   def shareObject(id: String, cascade: Boolean = false): Option[Request] =
     pack(id.isEmpty, configuration) {
-      val args = Map("cascade" -> cascade.toString)
+      val args = Map("cascade" -> (if (cascade) "1" else "0"))
       basis / split(id)._1 / split(id)._2 / "acl" / "" <<? args
     }
 

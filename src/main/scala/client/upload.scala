@@ -45,13 +45,7 @@ class Uploader(private val config: Configuration, private val http: Http, privat
 
   def shareObject(id: String, user: String, level: Int, cascade: Boolean) = {
 
-    val reqBody = """
-      {
-	"shared_with": {
-          "%s": %d
-	}
-      }
-    """.format(user, level)
+    val reqBody = """{ "shared_with": { "%s": %d } }""".format(user, level)
     logger info reqBody
 
     val request = (caller.shareObject(id, cascade) match {
