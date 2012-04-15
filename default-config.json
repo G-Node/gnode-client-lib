@@ -12,6 +12,7 @@
     "port": 8003,
     "prefix": "",
     "prefixData": "electrophysiology",
+    "prefixMetaData": "metadata",
 
     "apiDefinition": "/Users/apleonhardt/Code/gnode/gnode-client-lib/requirements.json",
 

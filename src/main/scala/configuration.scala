@@ -33,6 +33,7 @@ case class Configuration(username: String,
 			 port: Int,
 			 prefix: String,
 			 prefixData: String,
+			 prefixMetaData: String,
 			 apiDefinition: String,
 			 caching: String,
 			 db: String) {
@@ -51,9 +52,10 @@ object ConfigurationReader extends Loggable {
 	     port: Int,
 	     prefix: String,
 	     prefixData: String,
+	     prefixMetaData: String,
 	     apiDefinition: String,
 	     caching: String,
-	     db: String) = Configuration(username, password, host, port, prefix, prefixData, apiDefinition, caching, db)
+	     db: String) = Configuration(username, password, host, port, prefix, prefixData, prefixMetaData, apiDefinition, caching, db)
 
   /** Wrapper around fromString for straightforward configuration loading from file */
   def fromFile(filename: String): Option[Configuration] = {

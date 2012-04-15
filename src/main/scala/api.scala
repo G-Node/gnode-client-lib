@@ -36,16 +36,8 @@ trait CallGenerator {
 
   def createObject(objectType: String): Option[Request]
   def updateObject(id: String): Option[Request]
-
   def getObject(id: String, full: Boolean = true): Option[Request]
-  def getData(id: String, options: Map[String, String] = Map()): Option[Request]
-
-  def getParents(id: String): Option[Request]
-  def getChildren(id: String): Option[Request]
-
   def getList(id: String, limit: Int = 0, startIndex: Int = 0): Option[Request]
-  def assign(id: String, options: Map[String, String] = Map()): Option[Request]
-
   def shareObject(id: String, cascade: Boolean = false): Option[Request]
 
 }
@@ -73,7 +65,15 @@ class DefaultAPI(config: Configuration) extends CallGenerator with APIHelper {
   private val configuration = config
   
   private val short_basis = :/(configuration.host, configuration.port) / configuration.prefix
-  private val basis = short_basis / configuration.prefixData
+  private val basis_data = short_basis / configuration.prefixData
+  private val basis_metadata = short_basis / configuration.prefixMetaData
+
+  private def pickBasis(objType: String) = objType match {
+    case "sections" => basis_metadata
+    case "properties" => basis_metadata
+    case "values" => basis_metadata
+    case _ => basis_data
+  }
 
   def authenticateUser(): Option[Request] = authenticateUser(configuration.username,
 							     configuration.password)
@@ -85,49 +85,49 @@ class DefaultAPI(config: Configuration) extends CallGenerator with APIHelper {
     }
 
   def createObject(objectType: String): Option[Request] =
-    pack(objectType.isEmpty, configuration) { (basis / objectType / "").POST }
+    pack(objectType.isEmpty, configuration) { (pickBasis(objectType) / objectType / "").POST }
 
   def updateObject(id: String): Option[Request] =
     pack(id.isEmpty, configuration) {
-      (basis / split(id)._1 / split(id)._2 / "").POST
+      (pickBasis(split(id)._1) / split(id)._1 / split(id)._2 / "").POST
     }
 
   def getObject(id: String, full: Boolean = true): Option[Request] =
     pack(id.isEmpty, configuration) {
       val args = if (full) Map("q" -> "full") else Map()
-      basis / split(id)._1 / split(id)._2 / "" <<? args
+      pickBasis(split(id)._1) / split(id)._1 / split(id)._2 / "" <<? args
     }
 
   def shareObject(id: String, cascade: Boolean = false): Option[Request] =
     pack(id.isEmpty, configuration) {
       val args = Map("cascade" -> (if (cascade) "1" else "0"))
-      basis / split(id)._1 / split(id)._2 / "acl" / "" <<? args
+      pickBasis(split(id)._1) / split(id)._1 / split(id)._2 / "acl" / "" <<? args
     }
 
-  def getData(id: String, options: Map[String, String] = Map()): Option[Request] =
-    pack(id.isEmpty, configuration) {
-      (basis / "data" / id / "" <<? options)
-    }
+  // def getData(id: String, options: Map[String, String] = Map()): Option[Request] =
+  //   pack(id.isEmpty, configuration) {
+  //     (basis / "data" / id / "" <<? options)
+  //   }
 
-  def getParents(id: String): Option[Request] =
-    pack(id.isEmpty, configuration) {
-      (basis / "parents" / id / "")
-    }
+  // def getParents(id: String): Option[Request] =
+  //   pack(id.isEmpty, configuration) {
+  //     (basis / "parents" / id / "")
+  //   }
 
-  def getChildren(id: String): Option[Request] =
-    pack(id.isEmpty, configuration) {
-      (basis / "children" / id / "")
-    }
+  // def getChildren(id: String): Option[Request] =
+  //   pack(id.isEmpty, configuration) {
+  //     (basis / "children" / id / "")
+  //   }
 
   def getList(objectType: String, limit: Int, startIndex: Int): Option[Request] =
     pack(objectType.isEmpty, configuration) {
-      (basis / objectType / "" <<? Map("max_results" -> limit.toString,
+      (pickBasis(objectType) / objectType / "" <<? Map("max_results" -> limit.toString,
 				       "offset" -> startIndex.toString))
     }
 
-  def assign(id: String, options: Map[String, String]): Option[Request] =
-    pack(id.isEmpty, configuration) {
-      (basis / "assign" / id / "" <<? options)
-    }
+  // def assign(id: String, options: Map[String, String]): Option[Request] =
+  //   pack(id.isEmpty, configuration) {
+  //     (basis / "assign" / id / "" <<? options)
+  //   }
   
 }

@@ -32,6 +32,7 @@ object Default {
 						 "hal10.g-node.pri",
 						 80,
 						 "data",
+						 "metadata",
 						 "neo",
 						 "requirements.json",
 						 "MEMORY",
