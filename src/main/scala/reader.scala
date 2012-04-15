@@ -199,7 +199,7 @@ object Reader extends Loggable {
       if notData(list)
       JField(key, JString(value)) <- list
       if isRelation(key)
-    } relMap += key -> Array(extractID(rel))
+    } relMap += key -> Array(extractID(value))
 
     // Extract data
     for {
