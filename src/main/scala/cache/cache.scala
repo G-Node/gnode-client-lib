@@ -65,6 +65,8 @@ object Cache {
 
 abstract class Cache {
 
+  def clear()
+
   // Constructive
   def add(obj: NEObject, etag: String = "")
   def retrieve(id: String): Option[NEObject]

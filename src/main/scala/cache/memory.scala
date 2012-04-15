@@ -32,8 +32,8 @@ class MemoryCache extends Cache with Loggable {
   import scala.collection.mutable.Map
   private val cache = Map[String, CacheObject]()
 
-  def clear = {
-    cache = Map[String, CacheObject]()
+  def clear {
+    cache.clear()
   }
   
   def add(obj: NEObject, etag: String = "") {
