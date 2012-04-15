@@ -43,13 +43,15 @@ object Writer extends Loggable {
   import net.liftweb.json.Extraction._
   import net.liftweb.json.Printer._
 
+  import org.gnode.lib.util.IDExtractor._
+
   implicit val formats = DefaultFormats + FieldSerializer[NEODataSingle]() + FieldSerializer[NEODataMulti]()
 
   def serialize(obj: NEObject): Option[String] =
     Some(pretty(render(
       decompose(obj.stringInfo) merge
       decompose(obj.numInfo) merge
-      decompose(obj.relations.filterNot { case (key, list) => list.isEmpty }) merge
+      decompose(implodeID(obj.relations.filterNot { case (key, list) => list.isEmpty })) merge
       decompose(obj.data)
     )))
       
@@ -136,7 +138,17 @@ object Reader extends Loggable {
       label == "spike" ||
       label == "recordingchannelgroup" ||
       label == "recordingchannel" ||
-      label == "metadata"
+      label == "metadata" ||
+      label == "epocharray_set" ||
+      label == "irsaanalogsignal_set" ||
+      label == "analogsignal_set" ||
+      label == "epoch_set" ||
+      label == "eventarray_set" ||
+      label == "analogsignalarray_set" ||
+      label == "spiketrain_set" ||
+      label == "spike_set" ||
+      label == "event_set" ||
+      label == "segment_set"
     }
 
     def notRelation(label: String) =
@@ -166,6 +178,7 @@ object Reader extends Loggable {
     } numMap += key -> value
 
     // Extract data about relationships
+    import org.gnode.lib.util.IDExtractor._
 
     // Several
     for {
@@ -175,7 +188,7 @@ object Reader extends Loggable {
     } {
 
       val buffer = ListBuffer[String]()
-      for (JString(rel) <- rels) buffer += rel
+      for (JString(rel) <- rels) buffer += extractID(rel)
       relMap += key -> buffer.toArray
 
     }
@@ -186,7 +199,7 @@ object Reader extends Loggable {
       if notData(list)
       JField(key, JString(value)) <- list
       if isRelation(key)
-    } relMap += key -> Array(value)
+    } relMap += key -> Array(extractID(rel))
 
     // Extract data
     for {

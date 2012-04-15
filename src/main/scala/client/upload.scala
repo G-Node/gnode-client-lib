@@ -48,10 +48,13 @@ class Uploader(private val config: Configuration, private val http: Http, privat
     import dispatch.liftjson.Js._
     import net.liftweb.json.JsonAST._
 
+    val serialized = Writer.serialize(no).getOrElse("")
+    logger info serialized
+
     val request = (caller.createObject(objectType) match {
       case Some(r) => r
       case None => throw new IllegalArgumentException
-    }) << Writer.serialize(no).getOrElse("")
+    }) << serialized
 
     logger info request.method
     logger info request.path
@@ -76,10 +79,13 @@ class Uploader(private val config: Configuration, private val http: Http, privat
     import dispatch.liftjson.Js._
     import net.liftweb.json.JsonAST._
 
+    val serialized = Writer.serialize(no).getOrElse("")
+    logger info serialized
+
     val request = (caller.updateObject(id) match {
       case Some(r) => r
       case None => throw new IllegalArgumentException
-    }) << Writer.serialize(no).getOrElse("")
+    }) << serialized
 
     logger info request.method
     logger info request.path
@@ -90,8 +96,9 @@ class Uploader(private val config: Configuration, private val http: Http, privat
     try {
       http(handler)
     } catch {
-      case StatusCode(400, _) =>
+      case StatusCode(400, msg) =>
 	logger error UPLOAD_UPDATE_BAD_REQUEST(id)
+	logger error msg
 	None
     }
 

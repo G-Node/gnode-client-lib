@@ -32,6 +32,9 @@ object IDExtractor {
     s.slice(s.length - 2, s.length).reduceLeft(_ + "_" + _)
   }
 
+  def implodeID(relData: Map[String, Array[String]]) =
+    (for ((key, list) <- relData) yield (key, list.map(_.split("_").last.toInt))).toMap
+
 }
 
 object File {
