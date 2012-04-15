@@ -68,6 +68,10 @@ class TransferManager(private val config: Configuration) extends HttpInteractor 
   // Put "authenticated" in scope
   import a._
 
+  def clearCache {
+    d.cache.clear
+  }
+
   // Retrieval methods
 
   def addDown(id: String) =
