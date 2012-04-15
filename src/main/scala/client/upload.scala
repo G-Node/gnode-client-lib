@@ -63,8 +63,9 @@ class Uploader(private val config: Configuration, private val http: Http, privat
     try {
       http(handler)
     } catch {
-      case StatusCode(400, _) =>
+      case StatusCode(400, msg) =>
 	logger error UPLOAD_NEW_BAD_REQUEST(objectType)
+	logger error msg
 	None
     }
 
