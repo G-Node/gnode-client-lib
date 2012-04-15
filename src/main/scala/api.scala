@@ -46,6 +46,8 @@ trait CallGenerator {
   def getList(id: String, limit: Int = 0, startIndex: Int = 0): Option[Request]
   def assign(id: String, options: Map[String, String] = Map()): Option[Request]
 
+  def shareObject(id: String, cascade: Boolean = false): Option[Request]
+
 }
 
 trait APIHelper {
@@ -94,6 +96,12 @@ class DefaultAPI(config: Configuration) extends CallGenerator with APIHelper {
     pack(id.isEmpty, configuration) {
       val args = if (full) Map("q" -> "full") else Map()
       basis / split(id)._1 / split(id)._2 / "" <<? args
+    }
+
+  def shareObject(id: String, cascade: Boolean = false): Option[Request] =
+    pack(id.isEmpty, configuration) {
+      val args = Map("cascade" -> cascade.toString)
+      basis / split(id)._1 / split(id)._2 / "acl" / "" <<? args
     }
 
   def getData(id: String, options: Map[String, String] = Map()): Option[Request] =

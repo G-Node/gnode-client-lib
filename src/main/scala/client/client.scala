@@ -72,6 +72,12 @@ class TransferManager(private val config: Configuration) extends HttpInteractor 
     d.cache.clear
   }
 
+  // Sharing
+  def shareObject(id: String, user: String, level: Int = 1, cascade: Boolean = false) =
+    authenticated {
+      u shareObject(id, user, level, cascade)
+    }
+
   // Retrieval methods
 
   def addDown(id: String) =

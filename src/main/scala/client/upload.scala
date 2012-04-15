@@ -43,6 +43,42 @@ class Uploader(private val config: Configuration, private val http: Http, privat
 
   lazy val caller = CallGenerator(config)
 
+  def shareObject(id: String, user: String, level: Int, cascade: Boolean) = {
+
+    val reqBody = """
+      {
+	"shared_with": {
+          "%s": %d
+	}
+      }
+    """.format(user, level)
+    logger info reqBody
+
+    val request = (caller.shareObject(id, cascade) match {
+      case Some(r) => r
+      case None => throw new IllegalArgumentException
+    }) << reqBody
+
+    logger info request.method
+    logger info request.path
+
+    val handler = request as_str
+
+    try {
+
+      val body = http(handler)
+
+    } catch {
+
+      case StatusCode(n, msg) => logger error n.toString; logger error msg; false
+      case _ => logger error UPLOAD_UPDATE_BAD_REQUEST(id); false
+
+    }
+
+    true
+
+  }
+
   private def pushNew(no: NEObject, objectType: String): Option[String] = {
 
     import dispatch.liftjson.Js._
