@@ -104,30 +104,10 @@ class DefaultAPI(config: Configuration) extends CallGenerator with APIHelper {
       pickBasis(split(id)._1) / split(id)._1 / split(id)._2 / "acl" / "" <<? args
     }
 
-  // def getData(id: String, options: Map[String, String] = Map()): Option[Request] =
-  //   pack(id.isEmpty, configuration) {
-  //     (basis / "data" / id / "" <<? options)
-  //   }
-
-  // def getParents(id: String): Option[Request] =
-  //   pack(id.isEmpty, configuration) {
-  //     (basis / "parents" / id / "")
-  //   }
-
-  // def getChildren(id: String): Option[Request] =
-  //   pack(id.isEmpty, configuration) {
-  //     (basis / "children" / id / "")
-  //   }
-
   def getList(objectType: String, limit: Int, startIndex: Int): Option[Request] =
     pack(objectType.isEmpty, configuration) {
       (pickBasis(objectType) / objectType / "" <<? Map("max_results" -> limit.toString,
 				       "offset" -> startIndex.toString))
     }
-
-  // def assign(id: String, options: Map[String, String]): Option[Request] =
-  //   pack(id.isEmpty, configuration) {
-  //     (basis / "assign" / id / "" <<? options)
-  //   }
   
 }
