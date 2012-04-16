@@ -138,6 +138,9 @@ object Reader extends Loggable {
       label == "spike" ||
       label == "recordingchannelgroup" ||
       label == "recordingchannel" ||
+      label == "section" ||
+      label == "parent_property" ||
+      label == "parent_section" ||
       label == "metadata" ||
       label == "epocharray_set" ||
       label == "irsaanalogsignal_set" ||
@@ -148,7 +151,12 @@ object Reader extends Loggable {
       label == "spiketrain_set" ||
       label == "spike_set" ||
       label == "event_set" ||
-      label == "segment_set"
+      label == "segment_set" ||
+      label == "section_set" ||
+      label == "datafile_set" ||
+      label == "block_set" ||
+      label == "property_set" ||
+      label == "value_set"
     }
 
     def notRelation(label: String) =
