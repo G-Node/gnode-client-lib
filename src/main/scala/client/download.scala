@@ -43,11 +43,11 @@ class Downloader(private val config: Configuration, private val http: Http) exte
   lazy val caller = CallGenerator(config)
   lazy val cache = Cache(config.caching)
 
-  def list(objectType: String, limit: Int, startIndex: Int): Option[List[String]] = {
+  def list(objectType: String, limit: Int, startIndex: Int, searchTerms: Array[String]): Option[List[String]] = {
 
     logger info RETRIEVE_LIST_START(objectType)
     
-    val request = caller.getList(objectType, limit, startIndex) match {
+    val request = caller.getList(objectType, limit, startIndex, searchTerms) match {
       case Some(r) => r
       case None => throw new IllegalArgumentException
     }

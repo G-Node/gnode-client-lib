@@ -37,7 +37,7 @@ trait CallGenerator {
   def createObject(objectType: String): Option[Request]
   def updateObject(id: String): Option[Request]
   def getObject(id: String, full: Boolean = true): Option[Request]
-  def getList(id: String, limit: Int = 0, startIndex: Int = 0): Option[Request]
+  def getList(id: String, limit: Int, startIndex: Int, searchTerms: Array[String]): Option[Request]
   def shareObject(id: String, cascade: Boolean = false): Option[Request]
 
 }
@@ -104,10 +104,11 @@ class DefaultAPI(config: Configuration) extends CallGenerator with APIHelper {
       pickBasis(split(id)._1) / split(id)._1 / split(id)._2 / "acl" / "" <<? args
     }
 
-  def getList(objectType: String, limit: Int, startIndex: Int): Option[Request] =
+  def getList(objectType: String, limit: Int, startIndex: Int, searchTerms: Array[String]): Option[Request] =
     pack(objectType.isEmpty, configuration) {
-      (pickBasis(objectType) / objectType / "" <<? Map("max_results" -> limit.toString,
-				       "offset" -> startIndex.toString))
+      val query = (for (term <- searchTerms) yield split(term)).toMap
+      (pickBasis(objectType) / objectType / "" <<? (Map("max_results" -> limit.toString,
+				       "offset" -> startIndex.toString)) ++ query)
     }
   
 }
