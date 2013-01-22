@@ -27,8 +27,6 @@ import org.gnode.lib.cache._
 import org.gnode.lib.util._
 import org.gnode.lib.conf._
 import org.gnode.lib.neo._
-import org.gnode.lib.api._
-import org.gnode.lib.parse._
 
 // External packages
 import dispatch._
@@ -41,13 +39,14 @@ class Authenticator(private val config: Configuration, private val http: Http) e
   lazy val caller = CallGenerator(config)
   var auth = false
 
-  def authenticated[T](block: => T): T =
+  def authenticated[T](block: => T): T = {
     if (!this.auth) {
       this.authenticate()
       block
     } else {
       block
     }
+  n}
   
   def authenticate(): Boolean = {
     authenticate(config.username, config.password)
@@ -78,12 +77,12 @@ class Authenticator(private val config: Configuration, private val http: Http) e
 	logger error HTTP_GENERAL(code, message)
       	logger error AUTHENTICATE_ERROR(username)
       case _ =>
-	logger error AUTHENTICATE_ERROR(username)
+	logger error AUTHENTICATE_ERROR(username)	
       
     }
 
     auth = false
-    return false
+    false
 
   }
 
