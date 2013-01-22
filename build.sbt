@@ -2,12 +2,12 @@ import AssemblyKeys._
 
 name := "gnode-client-lib"
 
-version := "0.3"
+version := "0.4"
 
 organization := "org.gnode"
 
 // Scala dependency
-scalaVersion := "2.9.1"
+scalaVersion := "2.10.0"
 
 // Twttr Maven Repo (util-*)
 resolvers += "Twitter Maven Repository" at "http://maven.twttr.com"
@@ -23,10 +23,4 @@ libraryDependencies ++= Seq(
 
 assemblySettings
 
-// Development-time dependencies
-// libraryDependencies ++= Seq(
-//   "org.scala-tools.testing" %% "scalacheck" % "1.9" % "test",
-//   "org.scalatest" %% "scalatest" % "1.6.1" % "test"
-// )
-
-scalacOptions ++= Seq("-unchecked", "-deprecation")
+scalacOptions ++= Seq("-unchecked")
