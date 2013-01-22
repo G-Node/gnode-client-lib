@@ -110,5 +110,7 @@ class DefaultAPI(config: Configuration) extends CallGenerator with APIHelper {
       (pickBasis(objectType) / objectType / "" <<? (Map("max_results" -> limit.toString,
 				       "offset" -> startIndex.toString)) ++ query)
     }
+
+  def pullData(id: String, cascade: Boolean = false): Option[Request] = {}
   
 }
