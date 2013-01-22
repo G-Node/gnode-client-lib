@@ -39,7 +39,7 @@ case class Configuration(username: String,
 			 db: String) {
 
   def isIncomplete(): Boolean =
-    host.isEmpty || port == 0
+    host.isEmpty || port == 0 || username.isEmpty
 
 }
     
