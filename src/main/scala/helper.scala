@@ -22,8 +22,23 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. */
 
 package org.gnode.lib.util
 
+import dispatch._
+
 /** Utility object. Provides file management support (e.g., auto-closing of
  * resources). */
+
+object Network {
+
+  def check() = try {
+    val h = new Http
+    h(url("http://www.google.com") >|)
+    true
+  } catch {
+    case StatusCode(_,_) => false
+    case _ => false
+  }
+
+}
 
 object IDExtractor {
 

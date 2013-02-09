@@ -72,22 +72,6 @@ class TransferManager(private val config: Configuration) extends HttpInteractor 
     d.cache.clear
   }
 
-  // Connectivity check
-  def checkNetwork() = {
-    
-    // Basic network check: Try to contact Google.
-    val req = url("http://www.google.com")
-    val handler = req >|
-
-    try {
-      http(handler)
-      true
-    } catch {
-      case StatusCode(code, message) => false
-    }
-    
-  }
-
   // Sharing
   def shareObject(id: String, user: String, level: Int = 1, cascade: Boolean = false) =
     authenticated {
