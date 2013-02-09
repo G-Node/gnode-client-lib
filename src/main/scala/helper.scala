@@ -39,6 +39,30 @@ object Network {
     case _ => false
   }
 
+  def downloadFile(h: Http, location: String, prefix: String = "ephys", suffix: String = ".hd5", dir: String = ""): String = {
+    // This function takes a UR, downloads the file synchronously to a
+    // temporary location, and results in a path to the retrieved
+    // file.
+
+    import java.io.{FileOutputStream,File}
+
+    // Generate temporary path:
+    val tmp = if (dir.isEmpty) {
+      File.createTempFile(prefix, suffix)
+    } else {
+      val dirf = new File(dir)
+      File.createTempFile(prefix, suffix, dirf)
+    }
+
+    h(url(location) >>> new FileOutputStream(tmp))
+
+    tmp.getPath
+
+  }
+
+  def downloadFileNoAuth(location: String, prefix: String = "ephys", suffix: String = ".hd5", dir: String = ""): String =
+    downloadFile(new Http, location, prefix, suffix, dir)
+
 }
 
 object IDExtractor {
@@ -53,7 +77,7 @@ object IDExtractor {
 
 }
 
-object File {
+object FileUtil {
 
   /** Helper function. Offers auto-close functionality for close()-providing
    * resources. */

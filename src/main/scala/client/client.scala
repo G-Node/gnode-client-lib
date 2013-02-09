@@ -72,6 +72,10 @@ class TransferManager(private val config: Configuration) extends HttpInteractor 
     d.cache.clear
   }
 
+  // HDF5 download utility
+  def downloadData(location: String) =
+    Network.downloadFile(http, location)
+
   // Sharing
   def shareObject(id: String, user: String, level: Int = 1, cascade: Boolean = false) =
     authenticated {

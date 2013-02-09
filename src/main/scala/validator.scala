@@ -26,7 +26,7 @@ import org.gnode.lib.neo._
 import org.gnode.lib.conf._
 import org.gnode.lib.parse._
 import org.gnode.lib.util._
-import org.gnode.lib.util.File._
+import org.gnode.lib.util.FileUtil._
 import org.gnode.lib.api.APIHelper
 
 import net.liftweb.json._

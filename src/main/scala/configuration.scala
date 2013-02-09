@@ -23,7 +23,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. */
 package org.gnode.lib.conf
 
 import org.gnode.lib.util.Loggable
-import org.gnode.lib.util.File._
+import org.gnode.lib.util.FileUtil._
 
 // Encapsulates configuration data. Emitted by ConfigurationReader;
 // accepted by Connector.
