@@ -2,7 +2,7 @@ import AssemblyKeys._
 
 name := "gnode-client-lib"
 
-version := "0.3"
+version := "0.4"
 
 organization := "org.gnode"
 
@@ -17,8 +17,7 @@ libraryDependencies ++= Seq(
   "net.databinder" %% "dispatch-http" % "0.8.8",
   "net.databinder" %% "dispatch-lift-json" % "0.8.5",
   "net.databinder" %% "dispatch-json" % "0.8.8",
-  //"net.liftweb" %% "lift-json" % "2.4",
-  "com.twitter" %% "util-logging" % "3.0.0"
+  "com.twitter" %% "util-logging" % "4.0.1"
 )
 
 assemblySettings
