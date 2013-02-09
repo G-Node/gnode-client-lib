@@ -30,8 +30,9 @@ import dispatch._
 object Network {
 
   def check() = try {
-    val h = new Http
+    val h = new Http with NoLogging
     h(url("http://www.google.com") >|)
+    h.shutdown()
     true
   } catch {
     case StatusCode(_,_) => false
