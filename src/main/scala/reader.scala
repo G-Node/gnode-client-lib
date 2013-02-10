@@ -219,6 +219,10 @@ object Reader extends Loggable {
     } dataMap += key -> new NEODataSingle(units, data.toDouble)
 
     for {
+      JField(key, JObject(List(JField("units", JString(units)), JField("data", JString(data))))) <- parsedData
+    } dataMap += key -> new NEODataURL(units, data)
+
+    for {
       JField(key, JObject(List(JField("units", JString(units)), JField("data", JArray(data))))) <- parsedData
     } {
       

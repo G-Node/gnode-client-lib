@@ -25,6 +25,7 @@ package org.gnode.lib.neo
 sealed abstract class NEOData {
   def getUnits: String
   def getData: Array[Double]
+  def getURL: String
   def toString: String
 }
 
@@ -33,7 +34,18 @@ case class NEODataSingle(units: String,
  
   def getUnits = this.units
   def getData = Array(this.data)
+  def getURL = ""
   override def toString = "%s %s".format(this.data, this.units)
+
+}
+
+case class NEODataURL(units: String,
+		      url: String) extends NEOData {
+
+  def getUnits = this.units
+  def getData = Array[Double]()
+  def getURL = this.url
+  override def toString = "At: %s in %s".format(this.url, this.units)
 
 }
 
@@ -42,6 +54,7 @@ case class NEODataMulti(units: String,
 
   def getUnits = this.units
   def getData = this.data
+  def getURL = ""
   override def toString = "%s (...) %s".format(this.data.head, this.units)
 
 }
