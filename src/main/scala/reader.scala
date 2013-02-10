@@ -138,6 +138,7 @@ object Reader extends Loggable {
       label == "spike" ||
       label == "recordingchannelgroup" ||
       label == "recordingchannel" ||
+      label == "recordingchannel_set" ||
       label == "section" ||
       label == "parent_property" ||
       label == "parent_section" ||
