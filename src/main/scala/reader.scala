@@ -45,7 +45,7 @@ object Writer extends Loggable {
 
   import org.gnode.lib.util.IDExtractor._
 
-  implicit val formats = DefaultFormats + FieldSerializer[NEODataSingle]() + FieldSerializer[NEODataMulti]()
+  implicit val formats = DefaultFormats + FieldSerializer[NEODataSingle]() + FieldSerializer[NEODataMulti]() + FieldSerializer[NEODataURL]()
 
   def serialize(obj: NEObject): Option[String] =
     Some(pretty(render(
@@ -219,8 +219,8 @@ object Reader extends Loggable {
     } dataMap += key -> new NEODataSingle(units, data.toDouble)
 
     for {
-      JField(key, JObject(List(JField("units", JString(units)), JField("data", JString(data))))) <- parsedData
-    } dataMap += key -> new NEODataURL(units, data)
+      JField(key, JObject(List(JField("units", JString(units)), JField("data", JString(url))))) <- parsedData
+    } dataMap += key -> new NEODataURL(units, url)
 
     for {
       JField(key, JObject(List(JField("units", JString(units)), JField("data", JArray(data))))) <- parsedData
