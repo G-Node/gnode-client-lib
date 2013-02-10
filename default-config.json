@@ -5,16 +5,16 @@
     "required": ["username", "password", "host", "port", "path",
 		 "apiVersion", "caching", "db"],
     
-    "username": "bob2",
+    "username": "andrey",
     "password": "pass",
     
     "host": "141.84.42.103",
-    "port": 8003,
+    "port": 80,
     "prefix": "",
-    "prefixData": "electrophysiology",
+    "prefixData": "neo",
     "prefixMetaData": "metadata",
 
-    "apiDefinition": "/Users/apleonhardt/Code/gnode/gnode-client-lib/requirements.json",
+    "apiDefinition": "/home/aljoscha/code/gnode/gnode-client-lib/requirements.json",
 
     "caching" : "MEMORY",
     "db": ""
