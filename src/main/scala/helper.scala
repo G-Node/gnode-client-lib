@@ -39,7 +39,7 @@ object Network {
     case _ => false
   }
 
-  def downloadFile(h: Http, location: String, prefix: String = "ephys", suffix: String = ".hd5", dir: String = ""): String = {
+  def downloadFile(h: Http, location: String, prefix: String = "ephys", suffix: String = ".h5", dir: String = ""): String = {
     // This function takes a UR, downloads the file synchronously to a
     // temporary location, and results in a path to the retrieved
     // file.
