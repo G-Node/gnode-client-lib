@@ -23,6 +23,9 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. */
 package org.gnode.lib.util
 
 import dispatch._
+import dispatch.mime.Mime._
+import dispatch.liftjson.Js._
+import net.liftweb.json._
 
 /** Utility object. Provides file management support (e.g., auto-closing of
  * resources). */
@@ -39,8 +42,23 @@ object Network {
     case _ => false
   }
 
+  def uploadFile(h: Http, file_location: String, remote_location: Request, name: String): String = {
+    // This function takes a local and remote location and uploads the former to
+    // the latter with name "name". Furthermore, it extracts the permalink returned
+    // by the server.
+
+    import java.io.File
+    val local_file = new File(file_location)
+    
+    h(remote_location <<* (name, local_file) ># { json => (json \ "selected" \ "permalink") match {
+      case JString(d) => d
+      case _ => ""
+    }})
+  
+  }
+
   def downloadFile(h: Http, location: String, prefix: String = "ephys", suffix: String = ".h5", dir: String = ""): String = {
-    // This function takes a UR, downloads the file synchronously to a
+    // This function takes a URL, downloads the file synchronously to a
     // temporary location, and results in a path to the retrieved
     // file.
 
