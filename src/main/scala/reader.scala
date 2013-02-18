@@ -76,7 +76,7 @@ object Reader extends Loggable {
 	return None
     }
 
-    val parsedData = p get
+    val parsedData = (p get) \ "selected"
 
     // return Some(for { JField("selected", JArray(list)) <- parsedData
     // 		       JString(value) <- list } yield value)
