@@ -77,12 +77,11 @@ class TransferManager(private val config: Configuration) extends HttpInteractor 
     Network.downloadFile(http, location)
 
   // HDF5 upload utility
-  def uploadData(file_location: String): String = {
-
-    val req = u.caller.createDatafile.get
-    Network.uploadFile(http, file_location, req, "raw_file")
-
-  }
+  def uploadData(file_location: String): String =
+    authenticated {
+      val req = u.caller.createDatafile.get
+      Network.uploadFile(http, file_location, req, "raw_file")
+    }
 
   // Sharing
   def shareObject(id: String, user: String, level: Int = 1, cascade: Boolean = false) =

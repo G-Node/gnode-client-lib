@@ -223,15 +223,15 @@ object Reader extends Loggable {
       JField(key, JObject(List(JField("units", JString(units)), JField("data", JString(url))))) <- parsedData
     } dataMap += key -> new NEODataURL(units, url)
 
-    for {
-      JField(key, JObject(List(JField("units", JString(units)), JField("data", JArray(data))))) <- parsedData
-    } {
+    // for {
+    //   JField(key, JObject(List(JField("units", JString(units)), JField("data", JArray(data))))) <- parsedData
+    // } {
       
-      val buffer = ListBuffer[Double]()
-      for (JDouble(d) <- data) buffer += d
-      dataMap += key -> new NEODataMulti(units, buffer.toArray)
+    //   val buffer = ListBuffer[Double]()
+    //   for (JDouble(d) <- data) buffer += d
+    //   dataMap += key -> new NEODataMulti(units, buffer.toArray)
     
-    }
+    // }
 
     // HACK: Add id from permalink
     strMap += "id" -> (for {

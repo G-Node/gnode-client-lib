@@ -50,12 +50,12 @@ case class NEODataURL(units: String,
 }
 
 case class NEODataMulti(units: String,
-			data: Array[Double]) extends NEOData {
+			data: String) extends NEOData {
 
   def getUnits = this.units
-  def getData = this.data
-  def getURL = ""
-  override def toString = "%s (...) %s".format(this.data.head, this.units)
+  def getData = Array[Double]()
+  def getURL = this.data
+  override def toString = "Data location: %s".format(this.data)
 
 }
 
