@@ -40,6 +40,8 @@ trait CallGenerator {
   def getList(id: String, limit: Int, startIndex: Int, searchTerms: Array[String]): Option[Request]
   def shareObject(id: String, cascade: Boolean = false): Option[Request]
 
+  def createDatafile(): Option[Request]
+
 }
 
 trait APIHelper {
@@ -109,6 +111,11 @@ class DefaultAPI(config: Configuration) extends CallGenerator with APIHelper {
       val query = (for (term <- searchTerms) yield split(term)).toMap
       (pickBasis(objectType) / objectType / "" <<? (Map("max_results" -> limit.toString,
 				       "offset" -> startIndex.toString)) ++ query)
+    }
+
+  def createDatafile(): Option[Request] =
+    pack(false, configuration) {
+      (short_basis / "datafiles" / "").POST
     }
   
 }
