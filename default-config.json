@@ -5,7 +5,7 @@
     "required": ["username", "password", "host", "port", "path",
 		 "apiVersion", "caching", "db"],
     
-    "username": "andrey",
+    "username": "bob",
     "password": "pass",
     
     "host": "141.84.42.103",
