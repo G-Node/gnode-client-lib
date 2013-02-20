@@ -51,8 +51,7 @@ object Network {
     val local_file = new File(file_location)
     
     h(remote_location <<* (name, local_file) ># { json => (json \ "selected" \ "permalink") match {
-      case JString(d) =>
-	"/datafiles/" + d.split("/").last + "/"
+      case JString(d) => d
       case _ => ""
     }})
   
