@@ -1,11 +1,55 @@
 {
+    "property": {
+	"attributes": [
+	    "name",
+	    "definition",
+	    "section",
+	    "uncertainty",
+	    "mapping",
+	    "dependency",
+	    "safety_level",
+	    "unit",
+	    "comment",
+	    "dtype"
+	],
+	"required": [
+	    "name",
+	    "definition",
+	    "section"
+	]
+    },	
+    "section": {
+	"attributes": [
+	    "name",
+	    "tree_position",
+	    "odml_type",
+	    "safety_level",
+	    "description",
+	    "parent_section"
+	],
+	"required": [
+	    "name",
+	    "description"
+	]
+    },
+    "value": {
+	"attributes": [
+	    "current_state",
+	    "safety_level",
+	    "data",
+	    "parent_property"
+	],
+	"required": [
+	    "data",
+	    "parent_property"
+	]
+    },
     "spiketrain": {
         "attributes": [], 
         "required": [
             "t_start", 
             "t_stop", 
-            "times", 
-            "waveforms"
+            "times"
         ], 
         "parents": [
             "segment", 
@@ -69,14 +113,19 @@
     }, 
     "eventarray": {
         "attributes": [], 
-        "required": [], 
+        "required": [
+	    "labels",
+	    "times"
+	], 
         "parents": [
             "segment"
         ], 
         "children": [
-            "event"
         ], 
-        "data_fields": []
+        "data_fields": [
+	    "times",
+	    "labels"
+	]
     }, 
     "analogsignal": {
         "attributes": [
@@ -230,7 +279,8 @@
         "attributes": [
             "name", 
             "filedatetime", 
-            "index"
+            "index",
+	    "section"
         ], 
         "required": [
             "name"

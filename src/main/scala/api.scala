@@ -71,9 +71,9 @@ class DefaultAPI(config: Configuration) extends CallGenerator with APIHelper {
   private val basis_metadata = short_basis / configuration.prefixMetaData
 
   private def pickBasis(objType: String) = objType match {
-    case "sections" => basis_metadata
-    case "properties" => basis_metadata
-    case "values" => basis_metadata
+    case "section" => basis_metadata
+    case "property" => basis_metadata
+    case "value" => basis_metadata
     case _ => basis_data
   }
 
