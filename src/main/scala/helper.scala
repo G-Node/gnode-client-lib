@@ -32,9 +32,9 @@ import net.liftweb.json._
 
 object Network {
 
-  def check() = try {
+  def check(loc: String) = try {
     val h = new Http with NoLogging
-    h(url("http://www.google.com") >|)
+    h(url(loc) >|)
     h.shutdown()
     true
   } catch {
