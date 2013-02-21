@@ -84,9 +84,9 @@ class TransferManager(private val config: Configuration) extends HttpInteractor 
     }
 
   // Sharing
-  def shareObject(id: String, user: String, level: Int = 1, cascade: Boolean = false) =
+  def shareObject(id: String, safety_level: Int, users: Array[String], levels: Array[Int], cascade: Boolean) =
     authenticated {
-      u shareObject(id, user, level, cascade)
+      u shareObject(id, safety_level, users, levels, cascade)
     }
 
   // Retrieval methods

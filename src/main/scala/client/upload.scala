@@ -43,9 +43,16 @@ class Uploader(private val config: Configuration, private val http: Http, privat
 
   lazy val caller = CallGenerator(config)
 
-  def shareObject(id: String, user: String, level: Int, cascade: Boolean) = {
+  def shareObject(id: String, safety_level: Int, users: Array[String], levels: Array[Int], cascade: Boolean): Boolean = {
 
-    val reqBody = """{ "shared_with": { "%s": %d } }""".format(user, level)
+    val p = for(
+      (user, level) <- users zip levels
+      ) yield "\"%s\": %d".format(user, level)
+    val shared_with = if (!users.forall(_.isEmpty)) ", \"shared_with\": { %s }".format(p.deep.mkString(", "))
+		      else ""
+    
+    val reqBody = "{ \"safety_level\": %d".format(safety_level) + shared_with + " }"
+    
     logger info reqBody
 
     val request = (caller.shareObject(id, cascade) match {
@@ -64,12 +71,12 @@ class Uploader(private val config: Configuration, private val http: Http, privat
 
     } catch {
 
-      case StatusCode(n, msg) => logger error n.toString; logger error msg; false
-      case _ => logger error UPLOAD_UPDATE_BAD_REQUEST(id); false
+      case StatusCode(n, msg) => logger error n.toString; logger error msg; return false
+      case _ => logger error UPLOAD_UPDATE_BAD_REQUEST(id); return false
 
     }
 
-    true
+    return true
 
   }
 
