@@ -119,13 +119,22 @@ class TransferManager(private val config: Configuration) extends HttpInteractor 
 
   def retrieveList(objectType: String, limit: Int, startIndex: Int, searchTerms: Array[String]): Array[String] =
     authenticated {
-      d.list(objectType, limit, startIndex, searchTerms).getOrElse(List()).toArray
+      d.list(objectType, limit, startIndex, searchTerms).getOrElse(List()).map(_(0)).toArray
     }
 
   def retrieveList(objectType: String, limit: Int, startIndex: Int): Array[String] =
+    retrieveList(objectType, limit, startIndex, Array[String]())
+
+  def retrieveListAll(objectType: String, limit: Int, startIndex: Int, searchTerms: Array[String]): Array[Array[String]] =
     authenticated {
-      d.list(objectType, limit, startIndex, Array()).getOrElse(List()).toArray
+      val my_list = d.list(objectType, limit, startIndex, searchTerms).getOrElse(List()).toArray
+      Array(my_list.map(_(0)),
+	    my_list.map(_(1)),
+	    my_list.map(_(2)))
     }
+
+  def retrieveListAll(objectType: String, limit: Int, startIndex: Int): Array[Array[String]] =
+    retrieveListAll(objectType, limit, startIndex, Array[String]())
 
   // Generic push command
 

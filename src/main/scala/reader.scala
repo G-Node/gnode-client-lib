@@ -61,7 +61,7 @@ object Reader extends Loggable {
 
   import org.gnode.lib.util.IDExtractor._
   
-  def makeListOpt(data: String): Option[List[String]] = {
+  def makeListOpt(data: String): Option[List[List[String]]] = {
 
     var p: Option[JValue] = None
     
@@ -78,12 +78,13 @@ object Reader extends Loggable {
 
     val parsedData = (p get) \ "selected"
 
-    // return Some(for { JField("selected", JArray(list)) <- parsedData
-    // 		       JString(value) <- list } yield value)
-
     return Some(for {
-      JField("permalink", JString(value)) <- parsedData
-    } yield extractID(value))
+      JObject(obj) <- parsedData
+      JField("permalink", JString(permalink)) <- obj
+      JField("fields", JObject(fields)) <- obj
+      JField("name", JString(name)) <- fields
+      JField("description", JString(description)) <- fields
+    } yield List(extractID(permalink), name, description))
 
   }
 
