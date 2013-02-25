@@ -74,7 +74,14 @@ class TransferManager(private val config: Configuration) extends HttpInteractor 
 
   // HDF5 download utility
   def downloadData(location: String) =
-    Network.downloadFile(http, location)
+    authenticated {
+      Network.downloadFile(http, location)
+    }
+
+  def downloadDataCache(location: String, local_location: String, etag: String) =
+    authenticated {
+      Network.downloadFileCache(http, location, local_location, etag)
+    }
 
   // HDF5 upload utility
   def uploadData(file_location: String): String =

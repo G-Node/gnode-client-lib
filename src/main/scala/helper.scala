@@ -57,6 +57,40 @@ object Network {
   
   }
 
+  def downloadFileCache(h: Http, location: String, local_location: String, etag: String, prefix: String = "ephys", suffix: String = ".h5", dir: String = ""): Array[String] = {
+
+    import java.io.{FileOutputStream,File}
+
+    val tmp = if (dir.isEmpty) {
+      File.createTempFile(prefix, suffix)
+    } else {
+      val dirf = new File(dir)
+      File.createTempFile(prefix, suffix, dirf)
+    }
+
+    val headers = Map("If-None-Match" -> etag)
+    val request = url(location) <:< headers
+    val handler = request >+ { req =>
+      (req >>> new FileOutputStream(tmp), req >:> { _("ETag") }) }
+
+    try {
+
+      // 200: Object new or modified
+      val (_, new_etag) = h(handler)
+      return Array(tmp.getPath, new_etag.head)
+
+    } catch {
+
+      // Cacheable
+      case StatusCode(304, _) =>
+	return Array(local_location, etag)
+      case StatusCode(_, msg) =>
+	return Array(msg, etag)
+
+    }
+
+  }
+    
   def downloadFile(h: Http, location: String, prefix: String = "ephys", suffix: String = ".h5", dir: String = ""): String = {
     // This function takes a URL, downloads the file synchronously to a
     // temporary location, and results in a path to the retrieved
@@ -78,7 +112,7 @@ object Network {
 
   }
 
-  def downloadFileNoAuth(location: String, prefix: String = "ephys", suffix: String = ".hd5", dir: String = ""): String =
+  def downloadFileNoAuth(location: String, prefix: String = "ephys", suffix: String = ".h5", dir: String = ""): String =
     downloadFile(new Http, location, prefix, suffix, dir)
 
 }
