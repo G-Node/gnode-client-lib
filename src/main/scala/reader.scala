@@ -78,13 +78,39 @@ object Reader extends Loggable {
 
     val parsedData = (p get) \ "selected"
 
-    return Some(for {
+    val both = for {
       JObject(obj) <- parsedData
       JField("permalink", JString(permalink)) <- obj
       JField("fields", JObject(fields)) <- obj
       JField("name", JString(name)) <- fields
       JField("description", JString(description)) <- fields
-    } yield List(extractID(permalink), name, description))
+    } yield List(extractID(permalink), name, description)
+
+    val no_desc = for {
+      JObject(obj) <- parsedData
+      JField("permalink", JString(permalink)) <- obj
+      JField("fields", JObject(fields)) <- obj
+      JField("name", JString(name)) <- fields
+      JField("description", JNull) <- fields
+    } yield List(extractID(permalink), name, "")
+
+    val no_name = for {
+      JObject(obj) <- parsedData
+      JField("permalink", JString(permalink)) <- obj
+      JField("fields", JObject(fields)) <- obj
+      JField("name", JNull) <- fields
+      JField("description", JString(description)) <- fields
+    } yield List(extractID(permalink), "", description)
+
+    val none = for {
+      JObject(obj) <- parsedData
+      JField("permalink", JString(permalink)) <- obj
+      JField("fields", JObject(fields)) <- obj
+      JField("name", JNull) <- fields
+      JField("description", JNull) <- fields
+    } yield List(extractID(permalink), "", "")
+
+    return Some(both ++ no_desc ++ no_name ++ none)
 
   }
 
