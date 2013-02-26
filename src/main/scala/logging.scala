@@ -24,6 +24,7 @@ package org.gnode.lib.util
 
 import com.twitter.logging.{Logger, Level, Policy}
 import com.twitter.logging.config._
+import java.io.File
 
 /** Convenience trait for logging via Twttr's '''util-logger''' utility
  *
@@ -35,7 +36,7 @@ import com.twitter.logging.config._
 trait Loggable {
 
   var logNode = (this getClass) toString
-  var logFile = "/tmp/gnode.log"
+  var logFile = File.createTempFile("gnode", ".log").getPath
 
   lazy val logger: Logger =
     new LoggerConfig {
