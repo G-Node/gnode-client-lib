@@ -52,6 +52,8 @@ class Downloader(private val config: Configuration, var http: Http) extends Batc
       case None => throw new IllegalArgumentException
     }
 
+    logger info request.path
+
     val handler = request as_str
 
     try {

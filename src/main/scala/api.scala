@@ -51,9 +51,9 @@ trait APIHelper {
     else Some(request)
 
   // Hack -- TODO: Discuss
-  def split(id: String) = {
+  def split(id: String, delimiter: String = "_") = {
     try {
-      val pos = id.indexOf("_")
+      val pos = id.indexOf(delimiter)
       (id.substring(0, pos), id.substring(pos + 1))
     } catch {
       case _ => ("", "")
@@ -108,7 +108,10 @@ class DefaultAPI(config: Configuration) extends CallGenerator with APIHelper {
 
   def getList(objectType: String, limit: Int, startIndex: Int, searchTerms: Array[String]): Option[Request] =
     pack(objectType.isEmpty, configuration) {
-      val query = (for (term <- searchTerms) yield split(term)).toMap
+      val query = (for (term <- searchTerms) yield {
+	val terms = split(term, "|")
+	("%s__icontains".format(terms._1) -> terms._2)
+      })
       (pickBasis(objectType) / objectType / "" <<? (Map("max_results" -> limit.toString,
 				       "offset" -> startIndex.toString)) ++ query)
     }
