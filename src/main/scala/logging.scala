@@ -37,6 +37,7 @@ trait Loggable {
 
   var logNode = (this getClass) toString
   var logFile = File.createTempFile("gnode", ".log").getPath
+  //var logFile = "/tmp/gnode.log"
 
   lazy val logger: Logger =
     new LoggerConfig {

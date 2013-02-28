@@ -36,7 +36,7 @@ import dispatch._
 // Make log messages available globally
 import LogMessages._
 
-class Uploader(private val config: Configuration, private val http: Http, private val validator: Validator) extends BatchTransfer {
+class Uploader(private val config: Configuration, var http: Http, private val validator: Validator) extends BatchTransfer {
 
   import org.gnode.lib.parse.ExtractError
   import org.gnode.lib.util.IDExtractor._

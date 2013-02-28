@@ -70,21 +70,25 @@ object Network {
 
     val headers = Map("If-None-Match" -> etag)
     val request = url(location) <:< headers
+    val out = new FileOutputStream(tmp)
     val handler = request >+ { req =>
-      (req >>> new FileOutputStream(tmp), req >:> { _("ETag") }) }
+      (req >>> out, req >:> { _("ETag") }) }
 
     try {
 
       // 200: Object new or modified
       val (_, new_etag) = h(handler)
+      out.close
       return Array(tmp.getPath, new_etag.head)
 
     } catch {
 
       // Cacheable
       case StatusCode(304, _) =>
+	out.close
 	return Array(local_location, etag)
       case StatusCode(_, msg) =>
+	out.close
 	return Array(msg, etag)
 
     }

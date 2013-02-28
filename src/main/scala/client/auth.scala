@@ -36,7 +36,7 @@ import dispatch._
 // Make log messages available globally
 import LogMessages._
 
-class Authenticator(private val config: Configuration, private val http: Http) extends Loggable {
+class Authenticator(private val config: Configuration, var http: Http) extends Loggable {
 
   lazy val caller = CallGenerator(config)
   var auth = false

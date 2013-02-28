@@ -36,7 +36,7 @@ import dispatch._
 // Make log messages available globally
 import LogMessages._
 
-class Downloader(private val config: Configuration, private val http: Http) extends BatchTransfer {
+class Downloader(private val config: Configuration, var http: Http) extends BatchTransfer {
 
   import org.gnode.lib.parse.ExtractError
 
@@ -95,7 +95,12 @@ class Downloader(private val config: Configuration, private val http: Http) exte
     }
 
     val handler = request >+ { req =>
-      (req as_str, req >:> { _("ETag") }) }
+      (req as_str, req >:> {x: Map[String,Set[String]] =>
+	for ((key,value) <- x) {
+	  logger info key
+	  logger info value.mkString(",")
+	}
+	x("ETag") }) }
 
     try {
 
@@ -105,7 +110,9 @@ class Downloader(private val config: Configuration, private val http: Http) exte
       val obj = Reader.makeObjectOpt(body)
       obj match {
 	case Some(o) =>
-	  cache.replace(id, o, info.head)
+	  if (!info.isEmpty) {
+	    cache.replace(id, o, info.head)
+	  }
 	  return obj
 	case None =>
 	  logger error PARSE_ERROR(id)
