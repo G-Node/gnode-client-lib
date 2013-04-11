@@ -110,7 +110,7 @@ class DefaultAPI(config: Configuration) extends CallGenerator with APIHelper {
     pack(objectType.isEmpty, configuration) {
       val query = (for (term <- searchTerms) yield {
 	val terms = split(term, "|")
-	("%s__icontains".format(terms._1) -> terms._2)
+	("%s".format(terms._1) -> terms._2)
       })
       (pickBasis(objectType) / objectType / "" <<? (Map("max_results" -> limit.toString,
 				       "offset" -> startIndex.toString)) ++ query)
