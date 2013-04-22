@@ -27,11 +27,17 @@ import dispatch.mime.Mime._
 import dispatch.liftjson.Js._
 import net.liftweb.json._
 
-/** Utility object. Provides file management support (e.g., auto-closing of
- * resources). */
+// This package provides a number of utility functions, such as simplified
+// binary file downloading, network connectivity checks, file utilities,
+// etc.
 
 object Network {
 
+  // Simple, non-stateful connectivity check. We create a fresh
+  // Dispatch HTTP object (sans logging!), call the supplied location,
+  // using a regular GET, and check if it errors out. This can be
+  // improved. For instance, currently, a 404 or 500 yields false.
+  
   def check(loc: String) = try {
     val h = new Http with NoLogging
     h(url(loc) >|)
@@ -43,9 +49,14 @@ object Network {
   }
 
   def uploadFile(h: Http, file_location: String, remote_location: Request, name: String): String = {
-    // This function takes a local and remote location and uploads the former to
+
+    // This function takes one local and one remote location and uploads the former to
     // the latter with name "name". Furthermore, it extracts the permalink returned
-    // by the server.
+    // by the server. This is highly specific, but I'm not sure how to make this extraction
+    // more generic (e.g., in requirements.json?).
+    //
+    // There's a case to be made that this should be part of the CONNECTION MANAGER,
+    // and not a utility method; may be refactored.
 
     import java.io.File
     val local_file = new File(file_location)
@@ -59,6 +70,12 @@ object Network {
 
   def downloadFileCache(h: Http, location: String, local_location: String, etag: String, prefix: String = "ephys", suffix: String = ".h5", dir: String = ""): Array[String] = {
 
+    // Cache-enabled version of the fully state-free downloadFile(). Logic is simple and
+    // equivalent to all cache-based download methods: We supply the server with the locally
+    // stored ETAG, check for status code, and either download (if 200), or retrieve
+    // from disk (if 304). This function has no access to the underlying cache register.
+    // Everything is explicitly SUPPLIED.
+    
     import java.io.{FileOutputStream,File}
 
     val tmp = if (dir.isEmpty) {
@@ -68,7 +85,9 @@ object Network {
       File.createTempFile(prefix, suffix, dirf)
     }
 
+    // Critical cache logic:
     val headers = Map("If-None-Match" -> etag)
+
     val request = url(location) <:< headers
     val out = new FileOutputStream(tmp)
     val handler = request >+ { req =>
@@ -79,6 +98,8 @@ object Network {
       // 200: Object new or modified
       val (_, new_etag) = h(handler)
       out.close
+
+      // We now return the LOCAL PATH to the file, as well as the new ETAG:
       return Array(tmp.getPath, new_etag.head)
 
     } catch {
@@ -96,6 +117,7 @@ object Network {
   }
     
   def downloadFile(h: Http, location: String, prefix: String = "ephys", suffix: String = ".h5", dir: String = ""): String = {
+    
     // This function takes a URL, downloads the file synchronously to a
     // temporary location, and results in a path to the retrieved
     // file.
@@ -110,12 +132,20 @@ object Network {
       File.createTempFile(prefix, suffix, dirf)
     }
 
+    // This handles the actual download. There's a lot of room for
+    // enhancement here -- it's a fully synchronous call without
+    // the opportunity for chunked streaming, progress updates, or
+    // detailed network monitoring.
+    
     h(url(location) >>> new FileOutputStream(tmp))
 
     tmp.getPath
 
   }
 
+  // Cheap wrapper for downloadFile() in case we don't have to supply an authenticated HTTP
+  // session that is already available; primarily a debug helper.
+  
   def downloadFileNoAuth(location: String, prefix: String = "ephys", suffix: String = ".h5", dir: String = ""): String =
     downloadFile(new Http, location, prefix, suffix, dir)
 
@@ -123,6 +153,8 @@ object Network {
 
 object IDExtractor {
 
+  // URL helper utility.
+  
   def extractID(url: String): String = {
     val s = url.split("/")
     s.slice(s.length - 2, s.length).reduceLeft(_ + "_" + _)
@@ -135,8 +167,7 @@ object IDExtractor {
 
 object FileUtil {
 
-  /** Helper function. Offers auto-close functionality for close()-providing
-   * resources. */
+  // Nifty little tool for auto-closing resource objects.
 
   def using[T <: { def close() }, R](resource: T)(block: T => R): R = {
     

@@ -36,9 +36,17 @@ import java.io.File
 trait Loggable {
 
   var logNode = (this getClass) toString
-  var logFile = File.createTempFile("gnode", ".log").getPath
-  //var logFile = "/tmp/gnode.log"
 
+  // There's a logic problem here -- currently, every object
+  // creates a distinctly named log file. For debugging purposes,
+  // that's inconvenient; however, propagating a session-based
+  // log file name isn't trivial.
+  
+  var logFile = File.createTempFile("gnode", ".log").getPath
+
+  // Upon mix-in, every object has a "logger" attribute that points
+  // to a customized Logger (see Twitter documentation):
+  
   lazy val logger: Logger =
     new LoggerConfig {
 
@@ -50,6 +58,6 @@ trait Loggable {
 	roll = Policy.Never
       }
 
-    } apply
+    } apply // "apply" calls the constructor (equivalent to "()")
 
 }

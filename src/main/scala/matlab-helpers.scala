@@ -24,13 +24,24 @@ package org.gnode.lib.matlab
 
 import org.gnode.lib.api._
 
+// Collection of MATLAB-specific utilities that facilitate interfacing
+// between JVM and, crucially, Scala-specific functionality that isn't
+// covered by Mathworks' helper libraries.
+
 object Helper {
 
+  // Certain edge cases require us to check for None-ness from
+  // MATLAB. This function does that and nothing else:
+  
   def isNone[T](that: Option[T]) =
     that match {
       case None => true
       case _ => false
     }
+
+  // MATLAB's string handling is pretty bad, so this does a simple
+  // string split in order to get "analogsignal" from
+  // "analogsignal_1".
 
   def guessType(id: String) = {
     val splitter = new APIHelper {}

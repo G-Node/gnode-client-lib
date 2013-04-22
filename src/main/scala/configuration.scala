@@ -38,6 +38,9 @@ case class Configuration(username: String,
 			 caching: String,
 			 db: String) {
 
+  // This method implicitly defines what a workable configuration
+  // requires; currently, just host and port number (the latter
+  // defaulting to zero).
   def isIncomplete(): Boolean =
     host.isEmpty || port == 0
 

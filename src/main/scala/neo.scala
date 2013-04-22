@@ -22,12 +22,19 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. */
 
 package org.gnode.lib.neo
 
+// Basic abstract data container, as data comes in different varieties
+// that need to be handled accordingly (e.g., intrinsic arrays,
+// URL-mediated, etc.).
+
 sealed abstract class NEOData {
   def getUnits: String
   def getData: Array[Double]
   def getURL: String
   def toString: String
 }
+
+// NEODataSingle: Represents a single numerical data field, such as
+// permission level or similar.
 
 case class NEODataSingle(units: String,
 			 data: Double) extends NEOData {
@@ -38,6 +45,11 @@ case class NEODataSingle(units: String,
   override def toString = "%s %s".format(this.data, this.units)
 
 }
+
+// NEODataURL: Represents a HDF5-based data field, in which the URL
+// points to a valid HDF5 file containing the associated multi- or
+// one-dimensional array. Data handling is handled on the user-facing
+// client side (e.g., MATLAB).
 
 case class NEODataURL(units: String,
 		      url: String) extends NEOData {
@@ -59,11 +71,19 @@ case class NEODataMulti(units: String,
 
 }
 
+// NEObject: Basic object container. Represents the full JSON object,
+// and can be built step-wise (e.g., from MATLAB) by using
+// NEOBuilder. Given that we're in a heavily typed environment, this
+// handling is necessary -- could be simplified by using
+// content-neutral element objects.
+
 class NEObject(val stringInfo: Map[String, String] = Map[String, String](),
 	       val numInfo: Map[String, Double] = Map[String, Double](),
 	       val data: Map[String, NEOData] = Map[String, NEOData](),
 	       val relations: Map[String, Array[String]] = Map[String, Array[String]]()) {
 
+  // Utility functions that allow access to stored items and elements.
+  
   def getStringKeys =
     stringInfo.keys.toArray
 
@@ -79,6 +99,9 @@ class NEObject(val stringInfo: Map[String, String] = Map[String, String](),
   def isDefinedAt(key: String) =
     (stringInfo.isDefinedAt(key) || numInfo.isDefinedAt(key) || data.isDefinedAt(key) || relations.isDefinedAt(key))
 
+  // For command line use, this function allows pretty display of all
+  // elements regardless of type.
+  
   def pretty = (
     (for ((k, v) <- stringInfo) yield "%s: %s".format(k, v)).toList :::
     (for ((k, v) <- numInfo) yield "%s: %s".format(k, v.toString)).toList :::
@@ -87,6 +110,10 @@ class NEObject(val stringInfo: Map[String, String] = Map[String, String](),
     ).mkString("\n")
 
 }
+
+// NEOBuilder: Generator class for NEObject. Allows step-wise build of NEObjects
+// from, e.g., MATLAB; by calling build(), we get a full object representation
+// that can be uploaded.
 
 class NEOBuilder {
 
